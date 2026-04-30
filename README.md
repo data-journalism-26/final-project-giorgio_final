@@ -1,4 +1,4 @@
-# Data Bit 1 — Cyclone Harry on the Central Mediterranean migration route
+# Final Project — Cyclone Harry on the Central Mediterranean migration route
 
 **Author:** Giorgio Coppola · **Date:** April 2026 · GRAD-E1493 Data Journalism, Hertie School
 
@@ -6,7 +6,7 @@ A short data journalism piece reconstructing the path of an extratropical cyclon
 
 ## Read the piece in the browser
 
-**[Open the data bit on raw.githack.com](https://raw.githack.com/data-journalism-26/data-bit-1-giorgio/main/article.html)**
+**[Open the final project on raw.githack.com](https://raw.githack.com/data-journalism-26/final-project-giorgio_final/main/article.html)**
 
 The page renders best on a real HTTP origin (like raw.githack). If you open `article.html` from disk via `file://`, the GeoJSON files for the interactive map will be blocked by the browser's same-origin policy. Locally, run a small server first:
 
@@ -34,7 +34,7 @@ python3 -m http.server 8000
 │   ├── 03_snapshot_map.R           # static snapshot (check)
 │   ├── 04_animate.R                # render frames + encode MP4
 │   └── 05_build_geojson.R          # CSVs + SAR RDS -> GeoJSON for the web map
-├── data-bit-cyclone-harry.Rproj
+├── final-cyclone-harry.Rproj
 ├── Makefile                    # `make` rebuilds the deliverables; see "How to reproduce"
 ├── .gitignore                  # excludes the raw ERA5 NetCDFs and basemap tile cache
 └── README.md

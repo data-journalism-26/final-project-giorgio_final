@@ -1,4 +1,4 @@
-# Reproducible build for the Cyclone Harry data bit.
+# Reproducible build for the Cyclone Harry final project.
 #
 # Default target rebuilds the three deliverables (static snapshot, animation,
 # GeoJSON for the Leaflet map) from the cached CSVs and ERA5 NetCDFs.
