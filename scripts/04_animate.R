@@ -45,6 +45,27 @@ stopifnot(nlyr(u10) == length(times))
 MAP_X <- c(5, 22)
 MAP_Y <- c(29, 42)
 
+# Calabria emphasis: from Feb 1 to Feb 7 the camera eases from the wide
+# Mediterranean view into a tighter frame around Calabria, where the only
+# bodies in the post-cyclone window were recovered (Feb 7+). Aspect ratio of
+# the zoomed frame (4 / 3 ~ 1.33) matches the wide one (17 / 13 ~ 1.31), so
+# the figure does not letterbox differently between the two states.
+ZOOM_START <- as.POSIXct("2026-02-01 00:00", tz = "UTC")
+ZOOM_END   <- as.POSIXct("2026-02-07 00:00", tz = "UTC")
+ZOOM_X     <- c(13.5, 17.5)
+ZOOM_Y     <- c(37.0, 40.0)
+extent_for <- function(t) {
+  if (t < ZOOM_START)      return(list(x = MAP_X, y = MAP_Y))
+  if (t >= ZOOM_END)       return(list(x = ZOOM_X, y = ZOOM_Y))
+  p     <- as.numeric(difftime(t, ZOOM_START, units = "secs")) /
+           as.numeric(difftime(ZOOM_END, ZOOM_START, units = "secs"))
+  p_ease <- 0.5 - 0.5 * cos(pi * p)  # ease in/out
+  list(
+    x = (1 - p_ease) * MAP_X + p_ease * ZOOM_X,
+    y = (1 - p_ease) * MAP_Y + p_ease * ZOOM_Y
+  )
+}
+
 coast <- ne_coastline(scale = "large", returnclass = "sf")
 
 PROVIDER      <- "CartoDB.VoyagerNoLabels"
@@ -155,8 +176,9 @@ build_frame <- function(idx, frame_no) {
   united_at <- dplyr::filter(united, incident_date_clean <= as.Date(t))
   n_wrecks  <- nrow(united_at)
   n_deaths  <- sum(united_at$n_deaths, na.rm = TRUE)
+  ext       <- extent_for(t)
   date_box  <- tibble::tibble(
-    x = MAP_X[1] + 0.25, y = MAP_Y[1] + 0.25,
+    x = ext$x[1] + 0.25, y = ext$y[1] + 0.25,
     label = date_label_for(t, n_wrecks, n_deaths))
 
   p <- ggplot() +
@@ -230,7 +252,7 @@ build_frame <- function(idx, frame_no) {
         override.aes = list(fill = "#D32F2F", colour = "#7A1B1B",
                             stroke = 0.5, alpha = 0.65),
         order = 3)) +
-    coord_sf(xlim = MAP_X, ylim = MAP_Y, expand = FALSE) +
+    coord_sf(xlim = ext$x, ylim = ext$y, expand = FALSE) +
     labs(title    = "Cyclone Harry over the Central Mediterranean migration route",
          subtitle = "More than 1,000 people are presumed to have died crossing the route at the end of January, during the storm.",
          x = NULL, y = NULL) +
@@ -254,6 +276,14 @@ if (mode_arg == "test") {
                   by = "3 hour")
   keep_idx <- vapply(test_seq, \(t) which.min(abs(times - t)), integer(1))
   framerate <- 4
+} else if (mode_arg == "zoom") {
+  # Calabria zoom transition (Feb 1 -> Feb 7) plus a couple of frames on each
+  # side, so you can see the wide -> zoomed -> hold sequence.
+  test_seq <- seq(as.POSIXct("2026-01-31 18:00", tz = "UTC"),
+                  as.POSIXct("2026-02-09 00:00", tz = "UTC"),
+                  by = "6 hour")
+  keep_idx <- vapply(test_seq, \(t) which.min(abs(times - t)), integer(1))
+  framerate <- 4
 } else if (mode_arg == "full") {
   start    <- as.POSIXct("2026-01-12 00:00", tz = "UTC")
   end      <- as.POSIXct("2026-02-17 23:00", tz = "UTC")
@@ -261,7 +291,7 @@ if (mode_arg == "test") {
   keep_idx <- vapply(step_seq, \(t) which.min(abs(times - t)), integer(1))
   framerate <- 12
 } else {
-  stop("Mode must be 'test' or 'full'.")
+  stop("Mode must be 'test', 'zoom', or 'full'.")
 }
 
 cat(sprintf("Mode: %s | %d frames | framerate %d fps\n",
