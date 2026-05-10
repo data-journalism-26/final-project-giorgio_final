@@ -32,7 +32,7 @@ from satpy import Scene
 #    read is blocked in the kernel (which the socket timeout cannot save us
 #    from once the recv has started).
 socket.setdefaulttimeout(180)
-DOWNLOAD_DEADLINE_SEC = 300
+DOWNLOAD_DEADLINE_SEC = 480
 RETRIES_PER_FRAME = 3
 
 
