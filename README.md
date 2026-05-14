@@ -1,4 +1,4 @@
-# Final Project — Cyclone Harry on the Central Mediterranean migration route
+# Final Project — The Cyclone Harry on the Central Mediterranean migration route
 
 **Author:** Giorgio Coppola · **Date:** April 2026 · GRAD-E1493 Data Journalism, Hertie School
 
