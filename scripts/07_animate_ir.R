@@ -207,7 +207,7 @@ build_frame <- function(idx, frame_no) {
     ) +
     geom_point(data = dplyr::filter(united_at, n_deaths == 1),
                aes(x = longitude, y = latitude),
-               shape = 16, colour = "#D32F2F", size = 1.4, alpha = 0.95) +
+               shape = 16, colour = "#D32F2F", size = 3, alpha = 0.95) +
     geom_point(data = dplyr::filter(united_at, n_deaths > 1),
                aes(x = longitude, y = latitude, size = n_deaths),
                shape = 21, fill = "#D32F2F", colour = "#7A1B1B",

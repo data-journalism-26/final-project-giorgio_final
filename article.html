@@ -183,7 +183,8 @@
       height: 560px;
       background: #eef0f2;
     }
-    .map-toggle {
+    .map-toggle,
+    .video-toggle {
       display: flex;
       gap: 8px;
       padding: 10px 12px;
@@ -194,11 +195,13 @@
       align-items: center;
       flex-wrap: wrap;
     }
-    .map-toggle .label {
+    .map-toggle .label,
+    .video-toggle .label {
       color: var(--muted);
       margin-right: 4px;
     }
-    .map-toggle button {
+    .map-toggle button,
+    .video-toggle button {
       background: #fff;
       border: 1px solid var(--line);
       border-radius: 4px;
@@ -209,11 +212,13 @@
       line-height: 1;
       transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .map-toggle button:hover {
+    .map-toggle button:hover,
+    .video-toggle button:hover {
       background: #efefef;
       border-color: #b9b9b9;
     }
-    .map-toggle button.active {
+    .map-toggle button.active,
+    .video-toggle button.active {
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
@@ -393,9 +398,14 @@
     <figure>
       <div class="player">
         <video id="cyclone-video" preload="auto" playsinline>
-          <source src="output/video/cyclone_harry_full.mp4" type="video/mp4">
+          <source id="cyclone-video-source" src="output/video/cyclone_harry_full.mp4" type="video/mp4">
           Your browser does not support the video tag.
         </video>
+      </div>
+      <div class="video-toggle">
+        <span class="label">View:</span>
+        <button class="source-btn active" data-source="wind" data-src="output/video/cyclone_harry_full.mp4">Wind &amp; pressure</button>
+        <button class="source-btn" data-source="ir" data-src="output/video/cyclone_harry_ir_full.mp4">Infrared satellite</button>
       </div>
       <div class="controls">
         <button id="play-pause" aria-label="Play / pause">▶</button>
@@ -404,10 +414,10 @@
         <input class="scrub" type="range" id="scrub" min="0" max="1" step="0.001" value="0" aria-label="Seek">
         <span class="time" id="time-display">0s / —</span>
       </div>
-      <figcaption><strong>The storm in motion.</strong> 
-      Each red circle marks a reported sinking or body recovery, and the circle size increases with the number of dead or missing per incident. Many bodies were never recovered — the counts shown are reported figures, and most probably not full death tolls since many boats and bodies go undetected. 
-      The color gradient over the Mediterranean shows the wind speed (km/h), while the contour lines show the sea-level pressure (hPa) and their concentric closure marks the cyclone's centre. Tighter spacing between the contour lines means stronger wind.
-      Hourly wind and pressure measurements are sampled every three hours from 12 January to 17 February 2026. The running counter in the lower-left tracks the cumulative toll. Use the controls to pause, scrub, or step through frames.</figcaption>
+      <figcaption><strong>The storm in motion.</strong>
+      Each red circle marks a reported sinking or body recovery, and the circle size increases with the number of dead or missing per incident. Many bodies were never recovered — the counts shown are reported figures, and most probably not full death tolls since many boats and bodies go undetected.
+      <span id="caption-source">The color gradient over the Mediterranean shows the wind speed (km/h), while the contour lines show the sea-level pressure (hPa) and their concentric closure marks the cyclone's centre. Tighter spacing between the contour lines means stronger wind.</span>
+      Measurements are sampled every three hours from 12 January to 17 February 2026. The running counter in the lower-left tracks the cumulative toll. Use the controls to pause, scrub, or step through frames; toggle the view to compare the meteorological reanalysis with what the Meteosat satellite was seeing in infrared.</figcaption>
     </figure>
 
     <p>[Body paragraph — Explain more]</p>
@@ -501,6 +511,38 @@
       });
       scrub.addEventListener('input', function () {
         video.currentTime = parseFloat(scrub.value);
+      });
+
+      // Source toggle (wind & pressure <-> infrared satellite). Both videos
+      // span Jan 12 - Feb 17 at 3-hourly cadence, encoded at 12 fps, so
+      // currentTime maps 1:1 across the swap.
+      var sourceEl       = document.getElementById('cyclone-video-source');
+      var captionSource  = document.getElementById('caption-source');
+      var sourceButtons  = document.querySelectorAll('.source-btn');
+      var CAPTION_TEXT   = {
+        wind: "The color gradient over the Mediterranean shows the wind speed (km/h), while the contour lines show the sea-level pressure (hPa) and their concentric closure marks the cyclone's centre. Tighter spacing between the contour lines means stronger wind.",
+        ir:   "The shading shows Meteosat SEVIRI 10.8 µm cloud-top brightness temperature (K). The coldest tops (white / magenta) mark the deepest convection — the tallest parts of the storm; warmer values (grey) are low cloud or sea surface."
+      };
+
+      sourceButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (btn.classList.contains('active')) return;
+          var savedTime  = video.currentTime;
+          var wasPlaying = !video.paused;
+
+          sourceButtons.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          captionSource.textContent = CAPTION_TEXT[btn.dataset.source];
+
+          sourceEl.src = btn.dataset.src;
+          video.load();
+
+          video.addEventListener('loadedmetadata', function onLoaded() {
+            video.removeEventListener('loadedmetadata', onLoaded);
+            video.currentTime = Math.min(savedTime, video.duration);
+            if (wasPlaying) video.play();
+          });
+        });
       });
     })();
 
