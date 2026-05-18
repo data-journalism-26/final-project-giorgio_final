@@ -29,11 +29,13 @@ python3 -m http.server 8000
 ├── output/
 │   └── video/cyclone_harry_full.mp4             # 25 s animation, 12 fps
 ├── scripts/
-│   ├── 01_filter_cyclone_harry.R   # how the two CSVs were filtered from original data (not part of `make`; original data available upon request)
-│   ├── 02_download_era5.py         # ECMWF / Copernicus CDS download via cdsapi (`make download`)
-│   ├── 03_snapshot_map.R           # static snapshot (check)
-│   ├── 04_animate.R                # render frames + encode MP4
-│   └── 05_build_geojson.R          # CSVs + SAR RDS -> GeoJSON for the web map
+│   ├── 01_filter_incidents.R       # filter raw UNITED + IOM data to the storm window (raw data not redistributed; available on request)
+│   ├── 02_build_geojson.R          # CSVs + SAR RDS -> GeoJSON for the Leaflet map
+│   ├── 03_era5_download.py         # ECMWF / Copernicus CDS download via cdsapi (`make download`)
+│   ├── 04_era5_basemap.R           # basemap tile cache + shared globals for both animations (run first)
+│   ├── 05_era5_animate.R           # ERA5 wind + pressure animation (render frames + encode MP4)
+│   ├── 06_msg_download.py          # MSG SEVIRI IR_108 download via eumdac (`make download-msg`)
+│   └── 07_msg_animate.R            # MSG infrared satellite animation
 ├── final-cyclone-harry.Rproj
 ├── Makefile                    # `make` rebuilds the deliverables; see "How to reproduce"
 ├── .gitignore                  # excludes the raw ERA5 NetCDFs and basemap tile cache
@@ -45,17 +47,19 @@ python3 -m http.server 8000
 The data work is wired into a `Makefile`. From the project root:
 
 ```bash
-make            # rebuild snapshot, animation, geojson (default)
-make maps       # static snapshot only
-make anim       # animation only (~10 min)
-make geojson    # GeoJSON files consumed by the Leaflet map
-make help       # list all targets
+make             # rebuild snapshot, both animations, geojson (default)
+make maps        # static snapshot only
+make anim        # ERA5 wind/pressure animation only (~10 min)
+make anim-ir     # MSG infrared satellite animation only (~10 min)
+make geojson     # GeoJSON files consumed by the Leaflet map
+make help        # list all targets
 ```
 
-**One heavy step is kept out of `make all`** and must be invoked explicitly because it requires a Copernicus account (see "Source datasets" below):
+**Two heavy steps are kept out of `make all`** and must be invoked explicitly because they need external credentials:
 
 ```bash
-make download   # re-download the ERA5 NetCDFs from Copernicus (slow)
+make download      # re-download ERA5 NetCDFs from Copernicus (needs CDS account)
+make download-msg  # re-download MSG IR NetCDFs from EUMETSAT (needs HRSEVIRI license)
 ```
 
 **Requirements:**
@@ -66,11 +70,12 @@ make download   # re-download the ERA5 NetCDFs from Copernicus (slow)
 
 ## Data sources
 
-The two incident CSVs (`data/united_cyclone_harry.csv`, `data/iom_cyclone_harry.csv`) and the SAR-zone GeoJSON ship with the repo so the build is reproducible without registering with the original sources. The ERA5 NetCDFs are the one input that requires a free Copernicus account and is therefore not committed.
+**Data availability.** The two incident CSVs (`data/united_cyclone_harry.csv`, `data/iom_cyclone_harry.csv`) and the SAR-zone GeoJSON ship with the repo in **pre-filtered form** so the build is reproducible without registering with the original sources. The **raw UNITED and IOM datasets are not redistributed** here — both projects ask that researchers obtain the data directly from them. The filtered CSVs in `data/` are available upon request to the author for replication purposes. The ERA5 and MSG IR NetCDFs are not committed and require their own credentials (see `make download` / `make download-msg`).
 
-- **ERA5 reanalysis — wind, mean sea-level pressure, etc.** (NetCDFs in `data/era5/`, *not committed*.) Hourly single-levels from the ECMWF reanalysis, bbox 45°N–28°N / 5°W–25°E, 0.25° grid, retrieved through the [Copernicus Climate Data Store](https://cds.climate.copernicus.eu/). The download script (`scripts/02_download_era5.py`) hits the CDS API and requires a **free CDS account and a `~/.cdsapirc` token**. This is the only step that cannot be reproduced offline; everything downstream runs from cached files.
-- **UNITED for Intercultural Action — *List of Refugee Deaths*.** A public dataset of refugee and migrant deaths recorded since 1993, distributed by the network. Available at <https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/>. The CSV in this repo is filtered to records whose cause-of-death text mentions Cyclone Harry.
-- **IOM Missing Migrants Project.** Incident-level data from the International Organization for Migration. Downloadable as CSV from <https://missingmigrants.iom.int/downloads>. The CSV in this repo is filtered to Central Mediterranean route records dated 14 Jan – 17 Feb 2026.
+- **ERA5 reanalysis — wind, mean sea-level pressure, etc.** (NetCDFs in `data/era5/`, *not committed*.) Hourly single-levels from the ECMWF reanalysis, bbox 45°N–28°N / 5°W–25°E, 0.25° grid, retrieved through the [Copernicus Climate Data Store](https://cds.climate.copernicus.eu/). The download script (`scripts/03_era5_download.py`) hits the CDS API and requires a **free CDS account and a `~/.cdsapirc` token**.
+- **MSG SEVIRI IR brightness temperature.** (NetCDFs in `data/msg/ir108/`, *not committed*.) 10.8 µm channel cropped to the Mediterranean, retrieved through the [EUMETSAT Data Store](https://data.eumetsat.int/) via the `eumdac` CLI. Requires an EUMETSAT account and both the HRSEVIRI general and > 1 hr latency licenses.
+- **UNITED for Intercultural Action — *List of Refugee Deaths*.** A dataset of refugee and migrant deaths recorded since 1993, distributed by the network. Information at <https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/>. Raw data **not redistributed here** — obtain it from UNITED or contact the author for the filtered copy used in this article.
+- **IOM Missing Migrants Project.** Incident-level data from the International Organization for Migration. Information at <https://missingmigrants.iom.int/downloads>. Raw data **not redistributed here** — obtain it from IOM or contact the author for the filtered copy used in this article.
 - **IMO Search-and-Rescue zones (`data/sar_zones.geojson`).** Boundary polygons for Italy, Malta, Tunisia, and Libya, parsed from the official GML files at the IMO GISIS Global SAR Plan portal (<https://gisis.imo.org/>, registration required). The GeoJSON in this repo is the post-processed output.
 - **Basemap.** CartoDB Voyager (no labels) tiles served via [maptiles](https://github.com/riatelab/maptiles), © OpenStreetMap contributors, used under ODbL.
 
