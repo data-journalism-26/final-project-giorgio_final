@@ -7,186 +7,386 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
+    /* ── Design tokens ─────────────────────────────────────────── */
     :root {
       --text:        #1a1a1a;
       --muted:       #6b6b6b;
       --line:        #d8d8d8;
       --accent:      #7a1b1b;
+      --accent-lt:   #e57373;   /* accent on dark backgrounds */
       --bg:          #fafafa;
-      --bg-figure:   #ffffff;
+      --bg-dark:     #0f0f0f;
+      --bg-step:     #161616;
     }
 
-    * { box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     body {
-      margin: 0;
-      background: var(--bg);
+      background: var(--bg-dark);   /* hero bleeds full */
       color: var(--text);
       font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
       font-size: 18px;
       line-height: 1.65;
     }
 
-    article {
-      max-width: 920px;
-      margin: 0 auto;
-      padding: 64px 32px 96px;
+    /* ── Utilities ─────────────────────────────────────────────── */
+    .sans {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--line); }
+    a:hover { border-bottom-color: var(--accent); }
 
-    .kicker {
+    /* ── HERO ──────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100svh;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: grayscale(30%) brightness(0.45);
+      z-index: 0;
+    }
+    .hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.15) 0%,
+        rgba(10,10,10,0.30) 50%,
+        rgba(10,10,10,0.85) 88%,
+        rgba(10,10,10,1.00) 100%
+      );
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+      padding: 0 48px 72px;
+    }
+    .hero-kicker {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-lt);
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: #f4f4f4;
+      margin-bottom: 20px;
+    }
+    .hero .deck {
+      font-size: clamp(17px, 2.1vw, 21px);
+      line-height: 1.5;
+      color: #c0c0c0;
+      font-weight: 400;
+      max-width: 640px;
+      margin-bottom: 32px;
+    }
+    .hero-byline {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 13px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 14px;
+      color: #888;
+      letter-spacing: 0.03em;
     }
-
-    h1 {
-      font-size: 42px;
-      line-height: 1.15;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      margin: 0 0 14px;
-    }
-
-    .deck {
-      font-size: 21px;
-      line-height: 1.45;
-      color: var(--muted);
-      margin: 0 0 28px;
-      font-weight: 400;
-      text-align: left;
-      hyphens: manual;
-    }
-
-    .byline {
+    .hero-byline strong { color: #bbb; font-weight: 600; }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      right: 48px;
+      z-index: 2;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 14px;
-      color: var(--muted);
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      padding: 12px 0;
-      margin: 0 0 36px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555;
       display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
     }
-    .byline .author { color: var(--text); font-weight: 600; }
+    .hero-scroll-hint::after {
+      content: "";
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, #555, transparent);
+      animation: scroll-nudge 2s ease-in-out infinite;
+    }
+    @keyframes scroll-nudge {
+      0%, 100% { opacity: 0.4; transform: translateY(0); }
+      50%       { opacity: 1;   transform: translateY(6px); }
+    }
 
-    p {
-      margin: 0 0 22px;
+    /* ── TEXT SECTIONS (light) ──────────────────────────────────── */
+    .text-section {
+      background: var(--bg);
+    }
+    .prose {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 72px 32px;
+    }
+    .prose p {
+      margin-bottom: 22px;
       text-align: justify;
       hyphens: auto;
       -webkit-hyphens: auto;
     }
-    p.lede::first-letter {
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p.lede::first-letter {
       float: left;
       font-size: 64px;
-      line-height: 0.9;
+      line-height: 0.88;
       font-weight: 700;
-      padding: 6px 8px 0 0;
+      padding: 6px 10px 0 0;
       color: var(--accent);
     }
-
-    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--line); }
-    a:hover { border-bottom-color: var(--accent); }
-
-    figure {
-      margin: 36px auto;
-      padding: 0;
-      background: var(--bg-figure);
-      max-width: 720px;
+    .prose figure {
+      margin: 40px 0;
     }
-    figure img,
-    figure video {
+    .prose figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .prose figcaption {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: 10px 0 0;
+    }
+    .prose figcaption strong { color: var(--text); }
+
+    /* ── SCROLL SCENE ───────────────────────────────────────────── */
+    .scroll-scene {
+      background: var(--bg-dark);
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    /* Left: sticky video panel */
+    .sticky-panel {
+      flex: 0 0 58%;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 20px 32px 48px;
+    }
+
+    /* Video + controls inside sticky panel */
+    .player {
+      position: relative;
+      background: #000;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .player video {
       display: block;
       width: 100%;
       height: auto;
     }
-    figcaption {
+    .video-toggle {
+      display: flex;
+      gap: 6px;
+      padding: 9px 10px;
+      background: #1a1a1a;
+      border-top: 1px solid #2e2e2e;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.5;
-      padding: 12px 4px 0;
+      font-size: 12px;
+      align-items: center;
     }
-    figcaption strong { color: var(--text); }
+    .video-toggle .label { color: #666; margin-right: 2px; }
+    .video-toggle button {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 5px 12px;
+      cursor: pointer;
+      color: #aaa;
+      font-size: 12px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .video-toggle button:hover { background: #2e2e2e; color: #e0e0e0; border-color: #444; }
+    .video-toggle button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    /* Custom video controls */
-    .player {
-      position: relative;
-      background: #000;
-    }
     .controls {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: #f3f3f3;
-      border-top: 1px solid var(--line);
+      gap: 8px;
+      padding: 8px 10px;
+      background: #151515;
+      border-top: 1px solid #2a2a2a;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 13px;
+      font-size: 12px;
     }
     .controls button {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      padding: 6px 10px;
+      background: #222;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 5px 9px;
       cursor: pointer;
-      color: var(--text);
-      font-size: 13px;
-      line-height: 1;
-      min-width: 36px;
-      transition: background 0.15s, border-color 0.15s;
+      color: #ccc;
+      font-size: 12px;
+      min-width: 32px;
+      transition: background 0.12s;
     }
-    .controls button:hover {
-      background: #efefef;
-      border-color: #b9b9b9;
-    }
-    .controls button:active { background: #e6e6e6; }
+    .controls button:hover { background: #2e2e2e; color: #fff; }
     .controls .scrub {
       flex: 1;
       -webkit-appearance: none;
       appearance: none;
-      height: 4px;
-      background: #d4d4d4;
+      height: 3px;
+      background: #333;
       border-radius: 2px;
       outline: none;
     }
     .controls .scrub::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 14px; height: 14px;
+      width: 13px; height: 13px;
       border-radius: 50%;
-      background: var(--accent);
+      background: var(--accent-lt);
       cursor: pointer;
     }
     .controls .scrub::-moz-range-thumb {
-      width: 14px; height: 14px;
+      width: 13px; height: 13px;
       border-radius: 50%;
-      background: var(--accent);
+      background: var(--accent-lt);
       cursor: pointer;
       border: none;
     }
     .controls .time {
-      color: var(--muted);
+      color: #666;
       font-variant-numeric: tabular-nums;
-      min-width: 90px;
+      min-width: 80px;
       text-align: right;
+      font-size: 11px;
     }
 
-    /* Leaflet map */
-    .leaflet-figure { max-width: 720px; }
+    /* Panel caption below controls */
+    .panel-caption {
+      margin-top: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #4a4a4a;
+    }
+    .panel-caption strong { color: #777; }
+
+    /* Right: scrolling step text */
+    .steps-panel {
+      flex: 1;
+      padding: 15vh 48px 15vh 36px;
+      min-width: 0;
+    }
+    .step {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 0 48px 28px;
+      border-left: 2px solid #2a2a2a;
+      margin-bottom: 0;
+      opacity: 0.25;
+      transition: opacity 0.45s ease, border-color 0.45s ease;
+    }
+    .step.active {
+      opacity: 1;
+      border-left-color: var(--accent-lt);
+    }
+    .step-number {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-lt);
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-family: Georgia, serif;
+      font-size: 21px;
+      font-weight: 700;
+      color: #eeeeee;
+      margin: 0 0 14px;
+      line-height: 1.25;
+    }
+    .step p {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #909090;
+      margin-bottom: 14px;
+    }
+    .step p:last-child { margin-bottom: 0; }
+    .step p.note {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #5a5a5a;
+      border-left: 2px solid #2e2e2e;
+      padding-left: 12px;
+      margin-top: 18px;
+      font-style: italic;
+    }
+
+    /* ── MAP SECTION ────────────────────────────────────────────── */
+    .map-section {
+      background: var(--bg);
+      padding: 72px 32px 80px;
+    }
+    .map-section .section-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .map-section h2 {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      max-width: 580px;
+    }
+    .map-section .map-intro {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .map-figure {
+      max-width: 800px;
+      margin: 0 auto;
+    }
     #incident-map {
       width: 100%;
-      height: 560px;
+      height: 540px;
       background: #eef0f2;
     }
-    .map-toggle,
-    .video-toggle {
+    .map-toggle {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       padding: 10px 12px;
       background: #f3f3f3;
       border-top: 1px solid var(--line);
@@ -195,211 +395,201 @@
       align-items: center;
       flex-wrap: wrap;
     }
-    .map-toggle .label,
-    .video-toggle .label {
-      color: var(--muted);
-      margin-right: 4px;
-    }
-    .map-toggle button,
-    .video-toggle button {
+    .map-toggle .label { color: var(--muted); margin-right: 4px; }
+    .map-toggle button {
       background: #fff;
       border: 1px solid var(--line);
-      border-radius: 4px;
-      padding: 6px 14px;
+      border-radius: 3px;
+      padding: 5px 14px;
       cursor: pointer;
       color: var(--text);
       font-size: 13px;
-      line-height: 1;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
     }
-    .map-toggle button:hover,
-    .video-toggle button:hover {
-      background: #efefef;
-      border-color: #b9b9b9;
-    }
-    .map-toggle button.active,
-    .video-toggle button.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    .leaflet-tooltip.incident-tip {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.10);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--text);
-      padding: 10px 14px;
-      min-width: 240px;
-      max-width: 420px;
-      white-space: normal;
-    }
-    .leaflet-tooltip.incident-tip strong { color: var(--text); }
-    .leaflet-tooltip.incident-tip .meta { color: var(--muted); margin-bottom: 4px; }
-    .leaflet-tooltip.incident-tip .deaths {
-      color: var(--accent); font-weight: 700;
-    }
-
-    /* Map title (sits above the map, inside the figure) */
-    .map-title {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.35;
-      padding: 0 4px 12px;
-      letter-spacing: -0.005em;
-    }
-
-    /* Counts inline in the toggle bar, pushed to the right */
+    .map-toggle button:hover { background: #efefef; border-color: #bbb; }
+    .map-toggle button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
     .map-counts {
       margin-left: auto;
       color: var(--muted);
       font-size: 12.5px;
       white-space: nowrap;
     }
-    .map-counts .val {
-      color: var(--accent);
-      font-weight: 700;
+    .map-counts .val { color: var(--accent); font-weight: 700; }
+    .map-counts .sep { margin: 0 8px; color: #c4c4c4; }
+    .map-figcaption {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: 10px 4px 0;
+      max-width: 800px;
+      margin: 0 auto;
     }
-    .map-counts .sep {
-      margin: 0 8px;
-      color: #c4c4c4;
-    }
-    @media (max-width: 540px) {
-      .map-counts {
-        margin-left: 0;
-        flex-basis: 100%;
-        order: 10;
-        font-size: 12px;
-      }
-    }
+    .map-figcaption strong { color: var(--text); }
 
-    /* Map annotations: cities, seas, SAR zones (override Leaflet's default
-       marker styling so these are pure text). */
+    /* Leaflet tooltip */
+    .leaflet-tooltip.incident-tip {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+      padding: 10px 14px;
+      min-width: 220px;
+      max-width: 380px;
+      white-space: normal;
+    }
+    .leaflet-tooltip.incident-tip .meta { color: var(--muted); margin-bottom: 4px; }
+    .leaflet-tooltip.incident-tip .deaths { color: var(--accent); font-weight: 700; }
+
+    /* Map annotations */
     .map-city, .map-sea, .map-sar {
       background: none !important;
       border: 0 !important;
       pointer-events: none;
     }
-
     .map-city .city-dot {
-      position: absolute;
-      left: -3px; top: -3px;
+      position: absolute; left: -3px; top: -3px;
       width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #1a1a1a;
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.75);
+      border-radius: 50%; background: #1a1a1a;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.75);
     }
     .map-city .city-name {
       position: absolute;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-weight: 700;
-      font-size: 12px;
-      color: #141414;
+      font-weight: 700; font-size: 12px; color: #141414;
       white-space: nowrap;
-      text-shadow:
-        -1px -1px 0 #fafafa, 1px -1px 0 #fafafa,
-        -1px  1px 0 #fafafa, 1px  1px 0 #fafafa,
-         0    0   3px #fafafa;
+      text-shadow: -1px -1px 0 #fafafa, 1px -1px 0 #fafafa,
+                   -1px  1px 0 #fafafa, 1px  1px 0 #fafafa, 0 0 3px #fafafa;
     }
     .map-city.dir-right .city-name { left:  8px; top: -7px; }
     .map-city.dir-left  .city-name { right: 8px; top: -7px; }
     .map-city.dir-above .city-name { left: 0; bottom: 8px; transform: translateX(-50%); }
-    .map-city.dir-below .city-name { left: 0; top: 8px;    transform: translateX(-50%); }
-
+    .map-city.dir-below .city-name { left: 0; top:    8px; transform: translateX(-50%); }
     .map-sea .sea-name {
       position: absolute;
-      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
-      font-style: italic;
-      color: #404040;
-      font-size: 13px;
-      white-space: nowrap;
-      left: 0; top: 0;
-      transform: translate(-50%, -50%);
-      text-shadow:
-        -1px -1px 0 #fafafa, 1px -1px 0 #fafafa,
-        -1px  1px 0 #fafafa, 1px  1px 0 #fafafa,
-         0    0   4px #fafafa;
+      font-family: Georgia, serif; font-style: italic;
+      color: #404040; font-size: 13px; white-space: nowrap;
+      left: 0; top: 0; transform: translate(-50%, -50%);
+      text-shadow: -1px -1px 0 #fafafa, 1px -1px 0 #fafafa,
+                   -1px  1px 0 #fafafa, 1px  1px 0 #fafafa, 0 0 4px #fafafa;
     }
-
     .map-sar .sar-name {
       position: absolute;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #888888;
-      white-space: nowrap;
-      left: 0; top: 0;
-      transform: translate(-50%, -50%);
-      text-shadow:
-        0 0 4px #fafafa, 0 0 4px #fafafa, 0 0 4px #fafafa;
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: #888; white-space: nowrap;
+      left: 0; top: 0; transform: translate(-50%, -50%);
+      text-shadow: 0 0 4px #fafafa, 0 0 4px #fafafa;
     }
 
-    hr.rule {
-      border: 0;
+    /* ── SOURCES / FOOTER ───────────────────────────────────────── */
+    .sources-section {
+      background: var(--bg);
       border-top: 1px solid var(--line);
-      margin: 48px 0 24px;
     }
-
-    .sources {
+    .sources-section .prose {
+      padding-top: 48px;
+      padding-bottom: 80px;
+    }
+    .sources-section p {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.65;
+      margin-bottom: 18px;
+      text-align: left;
+      hyphens: none;
     }
-    .sources strong { color: var(--text); }
-    .sources a { color: var(--muted); border-bottom-color: #cfcfcf; }
+    .sources-section strong { color: var(--text); }
+    .sources-section a { color: var(--muted); border-bottom-color: #cfcfcf; }
 
+    /* ── Section divider (dark→light) ─────────────────────────── */
+    .band {
+      background: var(--bg);
+      height: 56px;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 820px) {
+      .scroll-scene { flex-direction: column; }
+      .sticky-panel {
+        position: relative;
+        height: auto;
+        flex: none;
+        width: 100%;
+        padding: 24px 20px;
+        top: auto;
+      }
+      .steps-panel {
+        padding: 24px 24px 48px;
+        background: var(--bg-step);
+      }
+      .step {
+        min-height: auto;
+        padding: 32px 0 32px 20px;
+        opacity: 1;
+      }
+      .step.active { border-left-color: var(--accent-lt); }
+    }
     @media (max-width: 540px) {
-      article { padding: 36px 18px 64px; }
-      h1 { font-size: 32px; }
-      .deck { font-size: 18px; }
-      body { font-size: 17px; }
+      .hero-content { padding: 0 24px 52px; }
+      .hero-scroll-hint { right: 24px; }
+      .prose { padding: 48px 20px; }
+      .map-section { padding: 48px 20px 56px; }
+      .map-counts { margin-left: 0; flex-basis: 100%; order: 10; font-size: 12px; }
     }
   </style>
 </head>
 <body>
-  <article>
-    <div class="kicker">Final Project · E1493 Data Journalism 2026</div>
 
-    <h1>The Cyclone Harry on the Central Mediterranean migration route</h1>
-
-    <p class="deck">Subtitle.</p>
-
-    <div class="byline">
-      <span class="author">Giorgio Coppola</span>
-      <span>April 2026</span>
+  <!-- ════════════════════════════════════════════════════
+       HERO
+       ════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <img class="hero-bg"
+         src="data/rescue-22-jan-2026.png"
+         alt="The rescue of the only survivor, 22 January 2026.">
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-kicker">Final Project · E1493 Data Journalism 2026</div>
+      <h1>The Cyclone Harry on the Central Mediterranean migration route</h1>
+      <p class="deck">In late January 2026, a Mediterranean cyclone swept across the Strait of Sicily as hundreds of people attempted the sea crossing from Tunisia. More than a thousand were reported dead or missing.</p>
+      <p class="hero-byline"><strong>Giorgio Coppola</strong> &nbsp;·&nbsp; April 2026</p>
     </div>
+    <div class="hero-scroll-hint">Scroll</div>
+  </section>
 
-    <p class="lede">At the end of January 2026, the Cyclone Harry stumbled upon Southern Italy and the North African coast, causing intense damage across Sicily and Calabria, including a landslide in the town of Niscemi, where, almost miraculously, no one was killed.
-    A related story, just few miles away, happened the same days during the storm: more than a thousand people have been missing or found dead in the Central Mediterranean, right after the passage of the Cyclone. Over the consequent weeks, few bodies of anonymous migrants have washed up
-    on the shores of Sicily and Calabria. They are only few of the many that departed from Tunisia between the 14 and 21 January 2026, as they were attempting crossing the Central Mediterranean Route to reach the Italian shores. 
-    The reported numbers are based on testimonies gathered in Tunisia by activists from Refugees in Libya and by the families of people who have not been heard from for days, and the data are consolidated by different independent organizations.
-   </p>
-     
-    <p> The Central Mediterranean Route is considered the most dangerous migratory route in the world by many organizations, including the International Organization for Migration, IOM (source). 
-    Talk about the CMR and why it is the most dangerous. Explain the human side: in this case, only one survivor, 1000 missing, 
-    </p>
+  <!-- ════════════════════════════════════════════════════
+       INTRO TEXT
+       ════════════════════════════════════════════════════ -->
+  <section class="text-section">
+    <div class="prose">
+      <p class="lede">At the end of January 2026, Cyclone Harry swept across Southern Italy and the North African coast, causing intense damage across Sicily and Calabria, including a landslide in the town of Niscemi — where, almost miraculously, no one was killed. A related story, just few miles away, unfolded the same days on the water: more than a thousand people were reported missing or found dead in the Central Mediterranean, right after the passage of the storm. Over the following weeks, a handful of anonymous bodies washed ashore on the beaches of Sicily and Calabria.</p>
+      <p>They are only a few of the many who had departed from the Tunisian coast between the 14th and 21st of January 2026, attempting the Central Mediterranean Route to reach Italian shores. The reported figures are based on testimonies gathered in Tunisia by activists from Refugees in Libya and by the families of people who had not been heard from in days. The data were then consolidated by independent organizations including UNITED for Intercultural Action and the IOM's Missing Migrants Project.</p>
+      <p>The Central Mediterranean Route is considered the most dangerous migratory route in the world. Every year, hundreds of people drown, suffocate, or disappear trying to cross roughly 300 kilometres of open sea. In this case, only one person survived. The cyclone was not the only cause — overloaded rubber dinghies, the absence of rescue vessels, the lack of legal pathways — but it was the trigger that turned a dangerous journey into a mass casualty event.</p>
+      <figure>
+        <img src="data/rescue-22-jan-2026.png"
+             alt="Rescue at sea: people on the deck of a ship pulling a person wearing a lifebuoy up from the water.">
+        <figcaption><strong>The only survivor.</strong> The rescue of the sole survivor from the many shipwrecks during Cyclone Harry, 22 January 2026. <em>Source: Refugees in Libya.</em></figcaption>
+      </figure>
+    </div>
+  </section>
 
-    <figure style="max-width: 540px;">
-      <img src="data/rescue-22-jan-2026.png"
-           alt="Rescue at sea: people on the deck of a ship pulling a person wearing a lifebuoy up from the water.">
-      <figcaption><strong>The only survivor.</strong> The rescue of the only survivor of the many shipwrecks that happened during Cyclone Harry, 22 January 2026. <em>Source: Refugees in Libya.</em></figcaption>
-    </figure>
-    
-    <p>[Body paragraph — Explain more]</p>
+  <!-- ════════════════════════════════════════════════════
+       SCROLL SCENE — sticky video + narrative steps
+       ════════════════════════════════════════════════════ -->
+  <section class="scroll-scene" id="scroll-scene">
 
-    <figure>
+    <!-- Left: sticky video panel -->
+    <div class="sticky-panel" id="sticky-panel">
       <div class="player">
-        <video id="cyclone-video" preload="auto" playsinline>
+        <video id="cyclone-video" preload="auto" playsinline muted>
           <source id="cyclone-video-source" src="output/video/cyclone_harry_full.mp4" type="video/mp4">
-          Your browser does not support the video tag.
         </video>
       </div>
       <div class="video-toggle">
@@ -414,19 +604,64 @@
         <input class="scrub" type="range" id="scrub" min="0" max="1" step="0.001" value="0" aria-label="Seek">
         <span class="time" id="time-display">0s / —</span>
       </div>
-      <figcaption><strong>The storm in motion.</strong>
-      Each red circle marks a reported sinking or body recovery, and the circle size increases with the number of dead or missing per incident. Many bodies were never recovered — the counts shown are reported figures, and most probably not full death tolls since many boats and bodies go undetected.
-      <span id="caption-source">The color gradient over the Mediterranean shows the wind speed (km/h), while the contour lines show the sea-level pressure (hPa) and their concentric closure marks the cyclone's centre. Tighter spacing between the contour lines means stronger wind.</span>
-      Measurements are sampled every three hours from 12 January to 17 February 2026. The running counter in the lower-left tracks the cumulative toll. Use the controls to pause, scrub, or step through frames; toggle the view to compare the meteorological reanalysis with what the Meteosat satellite was seeing in infrared.</figcaption>
-    </figure>
+      <p class="panel-caption">
+        <strong>Each red circle</strong> marks a recorded event. Circle size scales with the number of dead or missing per incident.
+        <span id="caption-source">Wind speed (colour, km/h) and sea-level pressure (contour lines, hPa) from ERA5 reanalysis, 3-hourly.</span>
+      </p>
+    </div>
 
-    <p>[Body paragraph — Explain more]</p>
+    <!-- Right: scrolling narrative steps -->
+    <div class="steps-panel">
 
-    <p>[Body paragraph — Introduce the data and methodology]</p>
+      <div class="step" id="step-0" data-time="0">
+        <div class="step-number">12 January 2026</div>
+        <h3>Departures begin</h3>
+        <p>In the weeks preceding the storm, hundreds of people prepared to leave Tunisia in small rubber dinghies and wooden boats. The Central Mediterranean Route — roughly 300 kilometres between the Tunisian and Libyan coasts and the Italian island of Lampedusa — is the world's most-documented deadly migration corridor.</p>
+        <p>The animation shows the full 37-day window, from 12 January to 17 February 2026. Red circles accumulate as incidents are recorded.</p>
+        <p class="note">Use the controls below the video to pause or scrub. Toggle between meteorological and satellite views.</p>
+      </div>
 
-    <figure class="leaflet-figure">
-      <div class="map-title">Deadly events recorded between 12 January and 17 February 2026</div>
-      <div id="incident-map" role="img" aria-label="Interactive map of recorded migrant death events in the central Mediterranean between 12 January and 17 February 2026, with IMO Search and Rescue zones shown as light grey context."></div>
+      <div class="step" id="step-1" data-time="6.7">
+        <div class="step-number">22 January 2026 — Storm peak</div>
+        <h3>The cyclone reaches its peak</h3>
+        <p>On 22 January, Cyclone Harry intensified over the Strait of Sicily. Sustained winds exceeded 80 km/h and wave heights rose sharply across the crossing zone. Multiple boats in the water at the time capsized or were swamped.</p>
+        <p>Of the hundreds of people who had departed from Tunisia in the days prior, only a single person was pulled from the sea alive — rescued after being spotted by a ship, clinging to a lifebuoy. The photograph at the top of this page shows that moment.</p>
+        <p>Toggle to the infrared satellite view to see the cyclone from above: the coldest cloud tops (white and magenta) mark the deepest convection at the storm's centre.</p>
+      </div>
+
+      <div class="step" id="step-2" data-time="13.3">
+        <div class="step-number">February 2026 — Calabria</div>
+        <h3>Bodies wash ashore</h3>
+        <p>In the weeks after the storm, the sea returned some of what it had taken. Bodies began washing up on the beaches of Lampedusa, Sicily, and the coast of Calabria — the toe of the Italian boot. The visualization zooms into the Calabrian coast as red circles accumulate on shore.</p>
+        <p>Each body recovered represented a family waiting for news. Activists and forensic teams worked to identify the deceased, many of whom had no documentation. Most will remain unnamed.</p>
+      </div>
+
+      <div class="step" id="step-3" data-time="24">
+        <div class="step-number">17 February 2026 — Final count</div>
+        <h3>Over a thousand dead or missing</h3>
+        <p>By mid-February, UNITED for Intercultural Action had recorded three incidents directly linked to Cyclone Harry, accounting for more than 500 victims. The IOM's Missing Migrants Project — which tracks a broader set of incidents including subsequent body recoveries — registered 25 events in the same window, totalling 499 dead or missing.</p>
+        <p>The real toll is almost certainly higher. Many boats never make it to a shore that could report them missing. Many bodies are never recovered. The sea keeps its secrets.</p>
+        <p class="note">The discrepancy between UNITED and IOM reflects different methodologies, not different events. See the methodology note below.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       MAP SECTION
+       ════════════════════════════════════════════════════ -->
+  <div class="band"></div>
+
+  <section class="map-section">
+    <div class="section-label">Where the boats went down</div>
+    <h2>Deadly events recorded between 12 January and 17 February 2026</h2>
+    <p class="map-intro">Recorded shipwrecks and body recoveries, plotted by coordinates. Circle size scales with the number of dead or missing. Toggle between the two main data sources to compare their coverage and counts.</p>
+
+    <div class="map-figure">
+      <div id="incident-map"
+           role="img"
+           aria-label="Interactive map of recorded migrant death events in the central Mediterranean between 12 January and 17 February 2026.">
+      </div>
       <div class="map-toggle">
         <span class="label">Source:</span>
         <button class="layer-btn active" data-source="united">UNITED</button>
@@ -437,307 +672,325 @@
           <span class="val deaths-val">—</span> estimated dead or missing
         </div>
       </div>
-      <figcaption><strong>Where the boats went down, according to UNITED and IOM.</strong> Recorded events between 12 January and 17 February 2026, including both reported sinkings and post-storm body recoveries (especially numerous in IOM's data, where remains continued to wash ashore along the Italian and Libyan coasts well into February). IMO Search and Rescue zones (Italy, Malta, Tunisia, Libya) drawn as light grey context. Hover a circle for incident details. Toggle between UNITED's records and IOM's Missing Migrants Project records.</figcaption>
-    </figure>
+    </div>
+    <p class="map-figcaption"><strong>Sources differ in scope.</strong> UNITED's <em>List of Refugee Deaths</em> records incidents explicitly linked to Cyclone Harry; IOM's Missing Migrants Project covers all Central Mediterranean events in the same window, including post-storm body recoveries along Italian and Libyan coasts. IMO Search and Rescue zones (Italy, Malta, Tunisia, Libya) are shown as dashed grey context. Hover a circle for incident details.</p>
+  </section>
 
-    <p>[Body paragraph — Explain different sources and why they differ in counting]</p>
+  <!-- ════════════════════════════════════════════════════
+       DISCUSSION
+       ════════════════════════════════════════════════════ -->
+  <section class="text-section">
+    <div class="prose">
+      <p>[Body paragraph — Why the sources differ in their counts, and what that tells us about the limits of documentation at sea.]</p>
+      <p>[Body paragraph — The broader context: how the Central Mediterranean became the world's most documented deadly border, and what accountability, if any, has followed.]</p>
+      <p>[Closing paragraph — The one survivor. The 1,000 unnamed. What remains after the sea has moved on.]</p>
+    </div>
+  </section>
 
-    <p>[Body paragraph — Discussion and implications]</p>
-    
-    <p>[Closing paragraph — conclusion.]</p>
+  <!-- ════════════════════════════════════════════════════
+       SOURCES
+       ════════════════════════════════════════════════════ -->
+  <section class="sources-section">
+    <div class="prose">
+      <p><strong>Data and methods.</strong> Surface wind, mean sea-level pressure and other ERA5 variables were retrieved from the <a href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a> for 12 January – 17 February 2026 (hourly, 0.25° grid, 45°N–28°N / 5°W–25°E). Satellite imagery is from Meteosat MSG SEVIRI Level 1.5, channel IR_108, downloaded via the EUMETSAT Data Store and processed with <em>Satpy</em>. Shipwreck records are from <a href="https://unitedagainstrefugeedeaths.eu/">UNITED for Intercultural Action</a>'s <em>List of Refugee Deaths</em>, filtered to incidents whose cause-of-death text mentions Cyclone Harry. IOM figures from the <a href="https://missingmigrants.iom.int/">Missing Migrants Project</a> (May 2026 snapshot), Central Mediterranean route, 14 January – 17 February 2026. Basemap from <a href="https://carto.com/attribution/">CartoDB</a> / OpenStreetMap contributors (ODbL).</p>
+      <p><strong>Replication.</strong> All code, data, and a methodological note are at <a href="https://github.com/data-journalism-26/final-project-giorgio_final">github.com/data-journalism-26/final-project-giorgio_final</a>.</p>
+      <p><strong>References.</strong> <em>Author, A. (2024). Title of cited work. Publisher / URL.</em></p>
+    </div>
+  </section>
 
-    <hr class="rule">
-
-    <p class="sources">
-      <strong>Data and methods.</strong>
-      Surface wind, mean sea-level pressure and other ERA5 variables were retrieved from the <a href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a> for the period 12 January – 17 February 2026 (hourly, 0.25° grid, 45°N–28°N / 5°W–25°E).
-      Shipwreck records are from <a href="https://unitedagainstrefugeedeaths.eu/">UNITED for Intercultural Action</a>'s <em>List of Refugee Deaths</em>, filtered to those whose cause-of-death text mentions Cyclone Harry. The IOM <a href="https://missingmigrants.iom.int/">Missing Migrants Project</a> figures are obtained by filtering its Central Mediterranean route entries to the same window. Basemap from <a href="https://carto.com/attribution/">CartoDB</a> · OpenStreetMap contributors, used under ODbL.
-      All code, data, methodological note and replication package are at <a href="https://github.com/data-journalism-26/final-project-giorgio_final">github.com/data-journalism-26/final-project-giorgio_final</a>.
-    </p>
-
-    <p class="sources">
-      <strong>References.</strong>
-      <em>Author, A. (2024). Title of cited work. Publisher / URL.</em>
-    </p>
-
-  </article>
-
+  <!-- ════════════════════════════════════════════════════
+       SCRIPTS
+       ════════════════════════════════════════════════════ -->
   <script>
-    (function () {
-      var video       = document.getElementById('cyclone-video');
-      var playPause   = document.getElementById('play-pause');
-      var prevFrame   = document.getElementById('prev-frame');
-      var nextFrame   = document.getElementById('next-frame');
-      var scrub       = document.getElementById('scrub');
-      var timeDisplay = document.getElementById('time-display');
+  (function () {
+    // ── Video controls ──────────────────────────────────────────────
+    var video       = document.getElementById('cyclone-video');
+    var playPause   = document.getElementById('play-pause');
+    var prevFrame   = document.getElementById('prev-frame');
+    var nextFrame   = document.getElementById('next-frame');
+    var scrub       = document.getElementById('scrub');
+    var timeDisplay = document.getElementById('time-display');
 
-      // Animation was encoded at 12 fps. Stepping snaps to the nearest decoded
-      // frame; the underlying video is not all-keyframes, so prev/next is
-      // approximate (~1/12 s).
-      var FPS = 12;
-      var FRAME_DURATION = 1 / FPS;
+    var FPS = 12;
+    var FRAME = 1 / FPS;
 
-      function fmt(s) {
-        if (!isFinite(s)) return '—';
-        return Math.round(s) + 's';
-      }
-      function updateDisplay() {
-        timeDisplay.textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
-      }
+    function fmt(s) { return isFinite(s) ? Math.round(s) + 's' : '—'; }
+    function updateDisplay() {
+      timeDisplay.textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+    }
 
-      video.addEventListener('loadedmetadata', function () {
-        scrub.max = video.duration;
-        updateDisplay();
-      });
-      video.addEventListener('timeupdate', function () {
-        scrub.value = video.currentTime;
-        updateDisplay();
-      });
-      video.addEventListener('play',  function () { playPause.textContent = '⏸'; });
-      video.addEventListener('pause', function () { playPause.textContent = '▶'; });
-      video.addEventListener('ended', function () { playPause.textContent = '▶'; });
+    video.addEventListener('loadedmetadata', function () {
+      scrub.max = video.duration;
+      updateDisplay();
+    });
+    video.addEventListener('timeupdate', function () {
+      scrub.value = video.currentTime;
+      updateDisplay();
+    });
+    video.addEventListener('play',  function () { playPause.textContent = '⏸'; });
+    video.addEventListener('pause', function () { playPause.textContent = '▶'; });
+    video.addEventListener('ended', function () { playPause.textContent = '▶'; });
 
-      playPause.addEventListener('click', function () {
-        if (video.paused) { video.play(); } else { video.pause(); }
-      });
-      prevFrame.addEventListener('click', function () {
-        video.pause();
-        video.currentTime = Math.max(0, video.currentTime - FRAME_DURATION);
-      });
-      nextFrame.addEventListener('click', function () {
-        video.pause();
-        var next = video.currentTime + FRAME_DURATION;
-        video.currentTime = next > video.duration ? video.duration : next;
-      });
-      scrub.addEventListener('input', function () {
-        video.currentTime = parseFloat(scrub.value);
-      });
+    playPause.addEventListener('click', function () {
+      if (video.paused) { video.play(); } else { video.pause(); }
+    });
+    prevFrame.addEventListener('click', function () {
+      video.pause();
+      video.currentTime = Math.max(0, video.currentTime - FRAME);
+    });
+    nextFrame.addEventListener('click', function () {
+      video.pause();
+      video.currentTime = Math.min(video.duration || 0, video.currentTime + FRAME);
+    });
+    scrub.addEventListener('input', function () {
+      video.currentTime = parseFloat(scrub.value);
+    });
 
-      // Source toggle (wind & pressure <-> infrared satellite). Both videos
-      // span Jan 12 - Feb 17 at 3-hourly cadence, encoded at 12 fps, so
-      // currentTime maps 1:1 across the swap.
-      var sourceEl       = document.getElementById('cyclone-video-source');
-      var captionSource  = document.getElementById('caption-source');
-      var sourceButtons  = document.querySelectorAll('.source-btn');
-      var CAPTION_TEXT   = {
-        wind: "The color gradient over the Mediterranean shows the wind speed (km/h), while the contour lines show the sea-level pressure (hPa) and their concentric closure marks the cyclone's centre. Tighter spacing between the contour lines means stronger wind.",
-        ir:   "The shading shows Meteosat SEVIRI 10.8 µm cloud-top brightness temperature (K). The coldest tops (white / magenta) mark the deepest convection — the tallest parts of the storm; warmer values (grey) are low cloud or sea surface."
-      };
+    // ── Source toggle (wind / infrared) ─────────────────────────────
+    var sourceEl      = document.getElementById('cyclone-video-source');
+    var captionSource = document.getElementById('caption-source');
+    var sourceButtons = document.querySelectorAll('.source-btn');
+    var CAPTION_TEXT  = {
+      wind: "Wind speed (colour, km/h) and sea-level pressure (contour lines, hPa) from ERA5 reanalysis, 3-hourly.",
+      ir:   "Meteosat SEVIRI 10.8 µm cloud-top brightness temperature (K). White/magenta = coldest tops, deepest convection. Grey = low cloud or sea surface."
+    };
 
-      sourceButtons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (btn.classList.contains('active')) return;
-          var savedTime  = video.currentTime;
-          var wasPlaying = !video.paused;
-
-          sourceButtons.forEach(function (b) { b.classList.remove('active'); });
-          btn.classList.add('active');
-          captionSource.textContent = CAPTION_TEXT[btn.dataset.source];
-
-          sourceEl.src = btn.dataset.src;
-          video.load();
-
-          video.addEventListener('loadedmetadata', function onLoaded() {
-            video.removeEventListener('loadedmetadata', onLoaded);
-            video.currentTime = Math.min(savedTime, video.duration);
-            if (wasPlaying) video.play();
-          });
-        });
-      });
-    })();
-
-    // ============================================================
-    // Interactive Leaflet map: incidents + IMO SAR zones
-    // ============================================================
-    window.addEventListener('load', function () {
-      if (typeof L === 'undefined') return;  // Leaflet failed to load
-
-      var map = L.map('incident-map', {
-        center: [35.5, 13.0],   // Strait of Sicily
-        zoom: 7,
-        zoomSnap: 0.5,
-        scrollWheelZoom: false  // avoid hijacking page scroll
-      });
-
-      // Same basemap family as the static / animation
-      L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
-        {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: 'abcd',
-          maxZoom: 18
-        }
-      ).addTo(map);
-
-      // Re-enable scroll-zoom only when the user clicks/focuses the map
-      map.on('focus', function () { map.scrollWheelZoom.enable(); });
-      map.on('blur',  function () { map.scrollWheelZoom.disable(); });
-
-      // ---- Layers ----
-      var unitedLayer = null;
-      var iomLayer    = null;
-
-      var bubbleStyle = {
-        fillColor: '#D32F2F', color: '#7A1B1B',
-        weight: 1, fillOpacity: 0.62, opacity: 0.85
-      };
-
-      function radiusFor(n) {
-        // sqrt-scale, matches the static legend approach
-        return Math.max(4, Math.sqrt(Math.max(1, n)) * 1.6);
-      }
-
-      function tipUnited(p) {
-        return '<div class="meta">' + p.date + '</div>'
-             + '<span class="deaths">' + p.n_deaths + '</span> dead or missing'
-             + (p.cause ? '<br><em>' + p.cause + '</em>' : '');
-      }
-      function tipIom(p) {
-        var loc = [p.location, p.country].filter(Boolean).join(', ');
-        return '<div class="meta">' + p.date + (loc ? ' &middot; ' + loc : '') + '</div>'
-             + '<span class="deaths">' + p.n_dead_missing + '</span> dead or missing'
-             + (p.cause ? '<br><em>' + p.cause + '</em>' : '');
-      }
-
-      function buildLayer(geojson, sizeKey, tipFn) {
-        // Add largest first so smallest end up on top of the SVG stack.
-        var sorted = {
-          type: geojson.type,
-          features: geojson.features.slice().sort(function (a, b) {
-            return (b.properties[sizeKey] || 0) - (a.properties[sizeKey] || 0);
-          })
-        };
-        return L.geoJSON(sorted, {
-          pointToLayer: function (feat, latlng) {
-            return L.circleMarker(latlng, Object.assign({},
-              bubbleStyle, { radius: radiusFor(feat.properties[sizeKey]) }));
-          },
-          onEachFeature: function (feat, layer) {
-            layer.bindTooltip(tipFn(feat.properties), {
-              className: 'incident-tip', sticky: true, direction: 'top',
-              offset: [0, -4]
-            });
-          }
-        });
-      }
-
-      // SAR zones: very light grey, just context
-      fetch('data/sar_zones.geojson').then(function (r) { return r.json(); })
-        .then(function (geo) {
-          L.geoJSON(geo, {
-            style: {
-              color: '#7a7a7a', weight: 1,
-              fillColor: '#9a9a9a', fillOpacity: 0.07,
-              opacity: 0.45,
-              dashArray: '3,3'
-            }
-          }).addTo(map);
-        });
-
-      // ---- Annotations (cities, seas, SAR zone labels) ----
-      // Same coordinates / positions as the static map and animation frames.
-      var cities = [
-        { name: "Tunis",            lon: 10.18, lat: 36.81, dir: "left"  },
-        { name: "Sfax",             lon: 10.76, lat: 34.74, dir: "left"  },
-        { name: "Tripoli",          lon: 13.18, lat: 32.89, dir: "below" },
-        { name: "Algiers",          lon:  3.06, lat: 36.75, dir: "right" },
-        { name: "Palermo",          lon: 13.36, lat: 38.12, dir: "below" },
-        { name: "Catania",          lon: 15.09, lat: 37.50, dir: "right" },
-        { name: "Cagliari",         lon:  9.11, lat: 39.22, dir: "below" },
-        { name: "Valletta",         lon: 14.51, lat: 35.90, dir: "below" },
-        { name: "Lampedusa",        lon: 12.60, lat: 35.50, dir: "right" },
-        { name: "Reggio Calabria",  lon: 15.65, lat: 38.11, dir: "right" },
-        { name: "Benghazi",         lon: 20.06, lat: 32.12, dir: "left"  },
-        { name: "Napoli",           lon: 14.23, lat: 40.85, dir: "above" }
-      ];
-      var sarLabels = [
-        { name: "Italian SAR",  lon: 12.0, lat: 39.0 },
-        { name: "Maltese SAR",  lon: 17.5, lat: 35.2 },
-        { name: "Tunisian SAR", lon: 10.4, lat: 37.4 },
-        { name: "Libyan SAR",   lon: 17.5, lat: 32.9 }
-      ];
-
-      function plainLabel(latlng, html, className) {
-        return L.marker(latlng, {
-          icon: L.divIcon({
-            html: html,
-            className: className,
-            iconSize: [1, 1],
-            iconAnchor: [0, 0]
-          }),
-          interactive: false,
-          keyboard: false
-        });
-      }
-
-      cities.forEach(function (c) {
-        plainLabel([c.lat, c.lon],
-          '<span class="city-dot"></span><span class="city-name">' + c.name + '</span>',
-          'map-city dir-' + c.dir
-        ).addTo(map);
-      });
-      sarLabels.forEach(function (s) {
-        plainLabel([s.lat, s.lon],
-          '<span class="sar-name">' + s.name + '</span>',
-          'map-sar'
-        ).addTo(map);
-      });
-
-      // ---- Source counts ----
-      var counts = { united: null, iom: null };
-      var currentSource = 'united';
-
-      function summarize(geo, key) {
-        var n = geo.features.length;
-        var sum = geo.features.reduce(function (s, f) {
-          var v = f.properties[key];
-          return s + (typeof v === 'number' ? v : (parseInt(v, 10) || 0));
-        }, 0);
-        return { records: n, deaths: sum };
-      }
-
-      var countsRoot = document.querySelector('.map-counts');
-      function renderCounter() {
-        var c = counts[currentSource];
-        if (!c || !countsRoot) return;
-        countsRoot.querySelector('.records-val').textContent = c.records.toLocaleString();
-        countsRoot.querySelector('.deaths-val').textContent  = c.deaths.toLocaleString();
-      }
-
-      // UNITED + IOM bubbles
-      var unitedReady = fetch('data/incidents_united.geojson').then(function (r) { return r.json(); })
-        .then(function (geo) {
-          unitedLayer = buildLayer(geo, 'n_deaths', tipUnited).addTo(map);
-          counts.united = summarize(geo, 'n_deaths');
-          if (currentSource === 'united') renderCounter();
-        });
-      var iomReady = fetch('data/incidents_iom.geojson').then(function (r) { return r.json(); })
-        .then(function (geo) {
-          iomLayer = buildLayer(geo, 'n_dead_missing', tipIom);
-          counts.iom = summarize(geo, 'n_dead_missing');
-          if (currentSource === 'iom') renderCounter();
-        });
-
-      // ---- Toggle ----
-      document.querySelectorAll('.map-toggle .layer-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          document.querySelectorAll('.map-toggle .layer-btn').forEach(function (b) {
-            b.classList.remove('active');
-          });
-          btn.classList.add('active');
-
-          currentSource = btn.dataset.source;
-          if (unitedLayer && map.hasLayer(unitedLayer)) map.removeLayer(unitedLayer);
-          if (iomLayer    && map.hasLayer(iomLayer))    map.removeLayer(iomLayer);
-
-          Promise.all([unitedReady, iomReady]).then(function () {
-            if (currentSource === 'united' && unitedLayer) unitedLayer.addTo(map);
-            if (currentSource === 'iom'    && iomLayer)    iomLayer.addTo(map);
-            renderCounter();
-          });
+    sourceButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (btn.classList.contains('active')) return;
+        var savedTime  = video.currentTime;
+        var wasPlaying = !video.paused;
+        sourceButtons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        captionSource.textContent = CAPTION_TEXT[btn.dataset.source];
+        sourceEl.src = btn.dataset.src;
+        video.load();
+        video.addEventListener('loadedmetadata', function onLoaded() {
+          video.removeEventListener('loadedmetadata', onLoaded);
+          video.currentTime = Math.min(savedTime, video.duration);
+          if (wasPlaying) video.play();
         });
       });
     });
+
+    // ── Scroll-driven step activation ───────────────────────────────
+    // Each .step has data-time (seconds in the video). When a step enters
+    // the center of the viewport, seek to that timestamp and play (muted).
+    var steps = document.querySelectorAll('.step');
+
+    // Track whether user has manually interacted with controls
+    var userInteracted = false;
+    ['click', 'input'].forEach(function (evt) {
+      [playPause, prevFrame, nextFrame, scrub].forEach(function (el) {
+        el.addEventListener(evt, function () { userInteracted = true; });
+      });
+    });
+
+    if ('IntersectionObserver' in window) {
+      var stepObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          // Mark active
+          steps.forEach(function (s) { s.classList.remove('active'); });
+          entry.target.classList.add('active');
+
+          // Seek video if user hasn't taken manual control
+          if (!userInteracted) {
+            var t = parseFloat(entry.target.dataset.time || '0');
+            if (isFinite(t) && video.duration) {
+              video.currentTime = Math.min(t, video.duration);
+            }
+            // Autoplay muted
+            if (video.paused) {
+              video.play().catch(function () {});
+            }
+          }
+        });
+      }, {
+        rootMargin: '-35% 0px -35% 0px',  // trigger when step is in middle 30% of viewport
+        threshold: 0
+      });
+
+      steps.forEach(function (s) { stepObserver.observe(s); });
+    } else {
+      // Fallback: just show all steps at full opacity
+      steps.forEach(function (s) { s.style.opacity = '1'; });
+    }
+  })();
+
+
+  // ══════════════════════════════════════════════════════════════════
+  // Interactive Leaflet map
+  // ══════════════════════════════════════════════════════════════════
+  window.addEventListener('load', function () {
+    if (typeof L === 'undefined') return;
+
+    var map = L.map('incident-map', {
+      center: [35.5, 13.0],
+      zoom: 7,
+      zoomSnap: 0.5,
+      scrollWheelZoom: false
+    });
+
+    L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+      {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 18
+      }
+    ).addTo(map);
+
+    map.on('focus', function () { map.scrollWheelZoom.enable(); });
+    map.on('blur',  function () { map.scrollWheelZoom.disable(); });
+
+    var unitedLayer = null;
+    var iomLayer    = null;
+
+    var bubbleStyle = {
+      fillColor: '#D32F2F', color: '#7A1B1B',
+      weight: 1, fillOpacity: 0.62, opacity: 0.85
+    };
+
+    function radiusFor(n) {
+      return Math.max(4, Math.sqrt(Math.max(1, n)) * 1.6);
+    }
+
+    function tipUnited(p) {
+      return '<div class="meta">' + p.date + '</div>'
+           + '<span class="deaths">' + p.n_deaths + '</span> dead or missing'
+           + (p.cause ? '<br><em>' + p.cause + '</em>' : '');
+    }
+    function tipIom(p) {
+      var loc = [p.location, p.country].filter(Boolean).join(', ');
+      return '<div class="meta">' + p.date + (loc ? ' &middot; ' + loc : '') + '</div>'
+           + '<span class="deaths">' + p.n_dead_missing + '</span> dead or missing'
+           + (p.cause ? '<br><em>' + p.cause + '</em>' : '');
+    }
+
+    function buildLayer(geojson, sizeKey, tipFn) {
+      var sorted = {
+        type: geojson.type,
+        features: geojson.features.slice().sort(function (a, b) {
+          return (b.properties[sizeKey] || 0) - (a.properties[sizeKey] || 0);
+        })
+      };
+      return L.geoJSON(sorted, {
+        pointToLayer: function (feat, latlng) {
+          return L.circleMarker(latlng, Object.assign({},
+            bubbleStyle, { radius: radiusFor(feat.properties[sizeKey]) }));
+        },
+        onEachFeature: function (feat, layer) {
+          layer.bindTooltip(tipFn(feat.properties), {
+            className: 'incident-tip', sticky: true, direction: 'top', offset: [0, -4]
+          });
+        }
+      });
+    }
+
+    // SAR zones
+    fetch('data/sar_zones.geojson').then(function (r) { return r.json(); })
+      .then(function (geo) {
+        L.geoJSON(geo, {
+          style: {
+            color: '#7a7a7a', weight: 1,
+            fillColor: '#9a9a9a', fillOpacity: 0.07, opacity: 0.45,
+            dashArray: '3,3'
+          }
+        }).addTo(map);
+      });
+
+    // City + sea labels
+    var cities = [
+      { name: "Tunis",           lon: 10.18, lat: 36.81, dir: "left"  },
+      { name: "Sfax",            lon: 10.76, lat: 34.74, dir: "left"  },
+      { name: "Tripoli",         lon: 13.18, lat: 32.89, dir: "below" },
+      { name: "Algiers",         lon:  3.06, lat: 36.75, dir: "right" },
+      { name: "Palermo",         lon: 13.36, lat: 38.12, dir: "below" },
+      { name: "Catania",         lon: 15.09, lat: 37.50, dir: "right" },
+      { name: "Cagliari",        lon:  9.11, lat: 39.22, dir: "below" },
+      { name: "Valletta",        lon: 14.51, lat: 35.90, dir: "below" },
+      { name: "Lampedusa",       lon: 12.60, lat: 35.50, dir: "right" },
+      { name: "Reggio Calabria", lon: 15.65, lat: 38.11, dir: "right" },
+      { name: "Benghazi",        lon: 20.06, lat: 32.12, dir: "left"  },
+      { name: "Napoli",          lon: 14.23, lat: 40.85, dir: "above" }
+    ];
+    var sarLabels = [
+      { name: "Italian SAR",  lon: 12.0, lat: 39.0 },
+      { name: "Maltese SAR",  lon: 17.5, lat: 35.2 },
+      { name: "Tunisian SAR", lon: 10.4, lat: 37.4 },
+      { name: "Libyan SAR",   lon: 17.5, lat: 32.9 }
+    ];
+
+    function plainLabel(latlng, html, cls) {
+      return L.marker(latlng, {
+        icon: L.divIcon({ html: html, className: cls, iconSize: [1,1], iconAnchor: [0,0] }),
+        interactive: false, keyboard: false
+      });
+    }
+    cities.forEach(function (c) {
+      plainLabel([c.lat, c.lon],
+        '<span class="city-dot"></span><span class="city-name">' + c.name + '</span>',
+        'map-city dir-' + c.dir).addTo(map);
+    });
+    sarLabels.forEach(function (s) {
+      plainLabel([s.lat, s.lon],
+        '<span class="sar-name">' + s.name + '</span>',
+        'map-sar').addTo(map);
+    });
+
+    // Counters
+    var counts = { united: null, iom: null };
+    var currentSource = 'united';
+
+    function summarize(geo, key) {
+      return {
+        records: geo.features.length,
+        deaths: geo.features.reduce(function (s, f) {
+          var v = f.properties[key];
+          return s + (typeof v === 'number' ? v : (parseInt(v, 10) || 0));
+        }, 0)
+      };
+    }
+
+    var countsRoot = document.querySelector('.map-counts');
+    function renderCounter() {
+      var c = counts[currentSource];
+      if (!c || !countsRoot) return;
+      countsRoot.querySelector('.records-val').textContent = c.records.toLocaleString();
+      countsRoot.querySelector('.deaths-val').textContent  = c.deaths.toLocaleString();
+    }
+
+    var unitedReady = fetch('data/incidents_united.geojson').then(function (r) { return r.json(); })
+      .then(function (geo) {
+        unitedLayer = buildLayer(geo, 'n_deaths', tipUnited).addTo(map);
+        counts.united = summarize(geo, 'n_deaths');
+        if (currentSource === 'united') renderCounter();
+      });
+    var iomReady = fetch('data/incidents_iom.geojson').then(function (r) { return r.json(); })
+      .then(function (geo) {
+        iomLayer = buildLayer(geo, 'n_dead_missing', tipIom);
+        counts.iom = summarize(geo, 'n_dead_missing');
+        if (currentSource === 'iom') renderCounter();
+      });
+
+    document.querySelectorAll('.map-toggle .layer-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.map-toggle .layer-btn').forEach(function (b) {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        currentSource = btn.dataset.source;
+        if (unitedLayer && map.hasLayer(unitedLayer)) map.removeLayer(unitedLayer);
+        if (iomLayer    && map.hasLayer(iomLayer))    map.removeLayer(iomLayer);
+        Promise.all([unitedReady, iomReady]).then(function () {
+          if (currentSource === 'united' && unitedLayer) unitedLayer.addTo(map);
+          if (currentSource === 'iom'    && iomLayer)    iomLayer.addTo(map);
+          renderCounter();
+        });
+      });
+    });
+  });
   </script>
 </body>
 </html>
