@@ -182,6 +182,34 @@
     }
     .prose figcaption strong { color: var(--text); }
 
+    /* ── VIZ INTRO (dark) ───────────────────────────────────────── */
+    .viz-intro { background: var(--bg-dark); }
+    .viz-intro-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 32px 24px;
+    }
+    .viz-intro .section-label {
+      color: var(--accent-lt);
+      margin-bottom: 14px;
+    }
+    .viz-intro p {
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.65;
+      color: #b8b8b8;
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+      margin-bottom: 16px;
+    }
+    .viz-intro p:last-child { margin-bottom: 0; }
+    .viz-intro a {
+      color: var(--accent-lt);
+      border-bottom-color: rgba(229, 115, 115, 0.35);
+    }
+    .viz-intro a:hover { border-bottom-color: var(--accent-lt); }
+
     /* ── SCROLL SCENE ───────────────────────────────────────────── */
     .scroll-scene {
       background: var(--bg-dark);
@@ -656,6 +684,16 @@
   </section>
 
   <!-- ════════════════════════════════════════════════════
+       VIZ INTRO — frames the scrolly that follows
+       ════════════════════════════════════════════════════ -->
+  <section class="viz-intro">
+    <div class="viz-intro-inner">
+      <div class="section-label">The Cyclone Harry over the Central Mediterranean migration route</div>
+      <p>In the visualization that follows, Cyclone Harry moves across the Central Mediterranean between 12 January and 17 February 2026. Below the animation you can toggle between two views of the storm: the infrared satellite image, which shows cloud tops from above, and the wind and pressure data, which traces the cyclone's circulation. The black circles that appear over the sea mark events recorded by <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">UNITED for Intercultural Action</a>, a network that has documented migrant deaths at Europe's borders since 1993.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
        SCROLL SCENE — sticky video + narrative steps
        ════════════════════════════════════════════════════ -->
   <section class="scroll-scene" id="scroll-scene">
@@ -706,7 +744,7 @@
       <div class="step" id="step-3" data-time="24">
         <div class="step-number">17 February 2026</div>
         <h3>Over a thousand dead or missing</h3>
-        <p>By mid-February, <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">UNITED for Intercultural Action</a> had recorded 20 incidents linked to Cyclone Harry, accounting for 1,109 deaths. The IOM’s Missing Migrants Project registered 25 events over the same period, with 499 people recorded as dead or missing. The actual toll is likely higher, as many bodies are never recovered.</p>
+        <p>By mid-February, UNITED for Intercultural Action had recorded 20 incidents linked to Cyclone Harry, accounting for 1,109 deaths. The IOM’s Missing Migrants Project registered 25 events over the same period, with 499 people recorded as dead or missing. The actual toll is likely higher, as many bodies are never recovered.</p>
       </div>
 
     </div>
@@ -747,10 +785,8 @@
        ════════════════════════════════════════════════════ -->
   <section class="text-section">
     <div class="prose">
-      <p>The figures differ because the organizations collect and classify deaths in different ways. The IOM’s Missing Migrants Project, launched in 2014, records each incident through a hierarchy of evidence: official and forensic records where available, then media reports, NGO sources, and survivor testimony. It publishes a documented minimum for events it can verify, often through more than one source. This makes the dataset conservative by design.</p>
-      <p>UNITED for Intercultural Action follows a different approach. Since 1993, its List of Refugee Deaths has recorded deaths linked to European border policy, using a wider evidentiary base that includes member organizations, families, media reports, and civil-society networks. Its definition is also broader: it includes deaths at sea, at land borders, in detention, and after arrival.</p>
-      <p>Between these two datasets are the organizations that witness events as they happen: rescue NGOs such as Mediterranea, SOS Méditerranée, and Sea-Watch; the Alarm Phone distress hotline; and activist networks such as Refugees in Libya. Their incident logs, distress calls, and survivor testimonies often feed into later counts. For events like the January 2026 crossings, where many boats left no survivors, these sources may be the only ones available.</p>
-      <p>The underlying problem is what researchers call “invisible shipwrecks”: boats that leave shore, disappear without survivors, and leave no official trace. This is why all these figures should be read as minimum estimates. The actual number is likely higher.</p>
+      <p>The figures differ because the organizations collect and classify deaths in different ways. The IOM’s Missing Migrants Project records each incident through a hierarchy of evidence: official and forensic records where available, then media reports, NGO sources, and survivor testimony. It publishes a documented minimum for events it can verify, often through more than one source. This makes the dataset conservative by design. UNITED for Intercultural Action follows a different approach. Since 1993, its List of Refugee Deaths has recorded deaths linked to European border policy, using a wider evidentiary base that includes member organizations, families, media reports, and civil-society networks. Its definition is also broader: it includes deaths at sea, at land borders, in detention, and after arrival.</p>
+      <p>Between these two datasets are the organizations that witness events as they happen: rescue NGOs such as Mediterranea, SOS Méditerranée, and Sea-Watch; the Alarm Phone distress hotline; and activist networks such as Refugees in Libya. Their incident logs, distress calls, and survivor testimonies often feed into later counts. For events like the January 2026 crossings, where many boats left no survivors, these sources may be the only ones available. The underlying problem is what researchers call “invisible shipwrecks”: boats that leave shore, disappear without survivors, and leave no official trace. This is why all these figures should be read as minimum estimates. The actual number is likely higher.</p>
       
       <div class="section-label">How to identify the bodies, and why it is important</div>
       
@@ -846,30 +882,18 @@
     var currentIdx = -1;
     var pauseAt    = null;
 
-    // Ease-out pause: as the video approaches pauseAt, ramp playbackRate
-    // down. We poll via requestAnimationFrame (~60 Hz) instead of the
-    // video element's "timeupdate" event (~4 Hz), so the rate updates
-    // smoothly and the pause lands within a single frame of the target.
-    var DECEL_WINDOW = 0.6;
-    var MIN_RATE     = 0.25;
-    var monitorOn    = false;
+    // Poll via requestAnimationFrame (~60 Hz) so the pause lands within
+    // a single frame of the target. Plays at constant speed (no ramp).
+    var monitorOn = false;
 
     function monitor() {
       if (pauseAt === null) { monitorOn = false; return; }
-      var remaining = pauseAt - video.currentTime;
-      if (remaining <= 0) {
+      if (video.currentTime >= pauseAt) {
         video.pause();
         video.currentTime = pauseAt;
-        video.playbackRate = 1;
         pauseAt = null;
         monitorOn = false;
         return;
-      }
-      if (remaining < DECEL_WINDOW) {
-        var t = remaining / DECEL_WINDOW;
-        video.playbackRate = MIN_RATE + t * (1 - MIN_RATE);
-      } else if (video.playbackRate !== 1) {
-        video.playbackRate = 1;
       }
       requestAnimationFrame(monitor);
     }
@@ -895,15 +919,13 @@
       target = Math.min(target, video.duration);
 
       if (video.currentTime < target - 0.05) {
-        // Forward — play through to target (decelerated via monitor loop)
+        // Forward — play through to target, monitor loop pauses us there.
         pauseAt = target;
-        video.playbackRate = 1;
         if (video.paused) video.play().catch(function () {});
         startMonitor();
       } else {
         // We're at or past the target — snap back and pause there.
         pauseAt = null;
-        video.playbackRate = 1;
         video.pause();
         video.currentTime = target;
       }
