@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Cyclone Harry on the Central Mediterranean migration route</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --text:        #1a1a1a;
+      --muted:       #6b6b6b;
+      --line:        #d8d8d8;
+      --accent:      #7a1b1b;
+      --accent-lt:   #e57373;   /* accent on dark backgrounds */
+      --bg:          #fafafa;
+      --bg-dark:     #0f0f0f;
+      --bg-step:     #161616;
+      --wide-width:  min(1400px, calc(50vw + 380px));
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--bg-dark); scroll-snap-type: y proximity; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+      font-size: 11pt;
+      line-height: 1.65;
+    }
+
+    /* ── Utilities ─────────────────────────────────────────────── */
+    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--line); }
+    a:hover { border-bottom-color: var(--accent); }
+
+    /* ── HERO ──────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100svh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: grayscale(30%) brightness(0.45);
+      z-index: 0;
+    }
+    .hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.15) 0%,
+        rgba(10,10,10,0.30) 50%,
+        rgba(10,10,10,0.85) 88%,
+        rgba(10,10,10,1.00) 100%
+      );
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: var(--wide-width);
+      padding: 0 32px 72px;
+    }
+    .hero-kicker {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-lt);
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: #f4f4f4;
+      margin-bottom: 20px;
+    }
+    .hero .deck {
+      font-size: clamp(17px, 2.1vw, 21px);
+      line-height: 1.5;
+      color: #c0c0c0;
+      font-weight: 400;
+      max-width: 640px;
+      margin-bottom: 32px;
+    }
+    .hero-byline {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      color: #888;
+      letter-spacing: 0.03em;
+      margin-bottom: 10px;
+    }
+    .hero-byline strong { color: #ccc; font-weight: 600; }
+    .hero-credit {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      color: #555;
+      line-height: 1.5;
+      max-width: 520px;
+    }
+    .hero-credit a { color: #555; border-bottom-color: #444; font-size: inherit; }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      right: 48px;
+      z-index: 2;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-scroll-hint::after {
+      content: "";
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, #555, transparent);
+      animation: scroll-nudge 2s ease-in-out infinite;
+    }
+    @keyframes scroll-nudge {
+      0%, 100% { opacity: 0.4; transform: translateY(0); }
+      50%       { opacity: 1;   transform: translateY(6px); }
+    }
+
+    /* ── TEXT SECTIONS (light) ──────────────────────────────────── */
+    .text-section {
+      background: var(--bg);
+    }
+    .prose {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 32px 24px;
+    }
+    .prose p {
+      margin-bottom: 22px;
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p.lede::first-letter {
+      float: left;
+      font-size: 64px;
+      line-height: 0.88;
+      font-weight: 700;
+      padding: 6px 10px 0 0;
+      color: var(--accent);
+    }
+    .prose figure {
+      margin: 40px 0;
+    }
+    .prose figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .prose figcaption {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: 10px 0 0;
+    }
+    .prose figcaption strong { color: var(--text); }
+
+    /* ── VIZ INTRO (dark) ───────────────────────────────────────── */
+    .viz-intro { background: var(--bg-dark); }
+    .viz-intro-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 32px 24px;
+    }
+    .viz-intro .section-label {
+      color: var(--accent-lt);
+      margin-bottom: 14px;
+    }
+    .viz-intro p {
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+      font-size: 17px;
+      line-height: 1.65;
+      color: #b8b8b8;
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+      margin-bottom: 16px;
+    }
+    .viz-intro p:last-child { margin-bottom: 0; }
+    .viz-intro a {
+      color: var(--accent-lt);
+      border-bottom-color: rgba(229, 115, 115, 0.35);
+    }
+    .viz-intro a:hover { border-bottom-color: var(--accent-lt); }
+
+    /* ── SCROLL SCENE ───────────────────────────────────────────── */
+    .scroll-scene {
+      background: var(--bg-dark);
+      display: flex;
+      align-items: flex-start;
+      position: relative;
+      max-width: var(--wide-width);
+      margin: 0 auto;
+    }
+
+    /* Left: sticky video panel */
+    .sticky-panel {
+      flex: 0 0 58%;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 20px 32px 48px;
+    }
+
+    /* Video + controls inside sticky panel */
+    .player {
+      position: relative;
+      background: #000;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .player video {
+      display: block;
+      width: 102%;
+      height: auto;
+      margin-left: -1%;
+    }
+    .video-toggle {
+      display: flex;
+      gap: 6px;
+      padding: 9px 10px;
+      background: #1a1a1a;
+      border-top: 1px solid #2e2e2e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      align-items: center;
+    }
+    .video-toggle .label { color: #666; margin-right: 2px; }
+    .video-toggle button {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 5px 12px;
+      cursor: pointer;
+      color: #aaa;
+      font-size: 12px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .video-toggle button:hover { background: #2e2e2e; color: #e0e0e0; border-color: #444; }
+    .video-toggle button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* Panel caption below the video */
+    .panel-caption {
+      margin-top: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #4a4a4a;
+    }
+    .panel-caption strong { color: #777; }
+
+    /* Right: scrolling step text */
+    .steps-panel {
+      flex: 1;
+      padding: 15vh 48px 15vh 36px;
+      min-width: 0;
+    }
+    .step {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 0 48px 28px;
+      border-left: 2px solid #2a2a2a;
+      margin-bottom: 0;
+      opacity: 0.25;
+      transition: opacity 0.45s ease, border-color 0.45s ease;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+    .step.active {
+      opacity: 1;
+      border-left-color: var(--accent-lt);
+    }
+    .step-number {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-lt);
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-family: Georgia, serif;
+      font-size: 21px;
+      font-weight: 700;
+      color: #eeeeee;
+      margin: 0 0 14px;
+      line-height: 1.25;
+    }
+    .step p {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #909090;
+      margin-bottom: 14px;
+    }
+    .step p:last-child { margin-bottom: 0; }
+    .step a {
+      color: var(--accent-lt);
+      border-bottom-color: rgba(229, 115, 115, 0.35);
+    }
+    .step a:hover { border-bottom-color: var(--accent-lt); }
+    .step p.note {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #5a5a5a;
+      border-left: 2px solid #2e2e2e;
+      padding-left: 12px;
+      margin-top: 18px;
+      font-style: italic;
+    }
+
+    /* ── MAP SECTION ────────────────────────────────────────────── */
+    .map-section {
+      background: var(--bg);
+      padding: 40px 32px 16px;
+    }
+    .section-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    /* Standalone section-label above the scroll-scene (dark body background) */
+    body > .section-label {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 32px 32px;
+      color: var(--accent-lt);
+    }
+    /* Section-label used inside body prose: needs top breathing room */
+    .prose .section-label {
+      margin-top: 36px;
+      margin-bottom: 14px;
+    }
+    .map-figure {
+      max-width: calc(var(--wide-width) - 64px);
+      margin: 0 auto;
+    }
+    #incident-map {
+      width: 100%;
+      height: 540px;
+      background: #eef0f2;
+    }
+    .map-toggle {
+      display: flex;
+      gap: 6px;
+      padding: 10px 12px;
+      background: #f3f3f3;
+      border-top: 1px solid var(--line);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .map-toggle .label { color: var(--muted); margin-right: 4px; }
+    .map-toggle button {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 5px 14px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 13px;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .map-toggle button:hover { background: #efefef; border-color: #bbb; }
+    .map-toggle button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .map-counts {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12.5px;
+      white-space: nowrap;
+    }
+    .map-counts .val { color: var(--accent); font-weight: 700; }
+    .map-counts .sep { margin: 0 8px; color: #c4c4c4; }
+    .map-figcaption {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: 10px 4px 0;
+      max-width: calc(var(--wide-width) - 64px);
+      margin: 0 auto;
+    }
+    .map-figcaption strong { color: var(--text); }
+
+    .map-header {
+      max-width: 760px;
+      margin: 0 auto 24px;
+      padding: 0 32px;
+    }
+    .map-section .map-header > p {
+      margin-top: 6px;
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+
+    /* Leaflet tooltip */
+    .leaflet-tooltip.incident-tip {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+      padding: 10px 14px;
+      min-width: 220px;
+      max-width: 380px;
+      white-space: normal;
+    }
+    .leaflet-tooltip.incident-tip .meta { color: var(--muted); margin-bottom: 4px; }
+    .leaflet-tooltip.incident-tip .deaths { color: var(--accent); font-weight: 700; }
+
+    /* Map annotations */
+    .map-city, .map-sar {
+      background: none !important;
+      border: 0 !important;
+      pointer-events: none;
+    }
+    .map-city .city-dot {
+      position: absolute; left: -3px; top: -3px;
+      width: 6px; height: 6px;
+      border-radius: 50%; background: #1a1a1a;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.75);
+    }
+    .map-city .city-name {
+      position: absolute;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 700; font-size: 12px; color: #141414;
+      white-space: nowrap;
+      text-shadow: -1px -1px 0 #fafafa, 1px -1px 0 #fafafa,
+                   -1px  1px 0 #fafafa, 1px  1px 0 #fafafa, 0 0 3px #fafafa;
+    }
+    .map-city.dir-right .city-name { left:  8px; top: -7px; }
+    .map-city.dir-left  .city-name { right: 8px; top: -7px; }
+    .map-city.dir-above .city-name { left: 0; bottom: 8px; transform: translateX(-50%); }
+    .map-city.dir-below .city-name { left: 0; top:    8px; transform: translateX(-50%); }
+    .map-sar .sar-name {
+      position: absolute;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: #888; white-space: nowrap;
+      left: 0; top: 0; transform: translate(-50%, -50%);
+      text-shadow: 0 0 4px #fafafa, 0 0 4px #fafafa;
+    }
+
+    /* ── SOURCES / FOOTER ───────────────────────────────────────── */
+    .sources-section {
+      background: var(--bg);
+      border-top: 1px solid var(--line);
+    }
+    .sources-section .prose {
+      padding-top: 32px;
+      padding-bottom: 72px;
+    }
+    .sources-section p {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 18px;
+      text-align: left;
+      hyphens: none;
+    }
+    .sources-section strong { color: var(--text); }
+    .sources-section a { color: var(--muted); border-bottom-color: #cfcfcf; }
+    .references-heading {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 12px 0 14px;
+    }
+    .references-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 18px;
+    }
+    .references-list li {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding-left: 24px;
+      text-indent: -24px;
+      margin-bottom: 10px;
+      text-align: left;
+      hyphens: none;
+    }
+    .references-list li:last-child { margin-bottom: 0; }
+
+    /* ── Section divider (dark→light) ─────────────────────────── */
+    .band {
+      background: var(--bg);
+      height: 32px;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 820px) {
+      .scroll-scene { flex-direction: column; }
+      .sticky-panel {
+        position: relative;
+        height: auto;
+        flex: none;
+        width: 100%;
+        padding: 24px 20px;
+        top: auto;
+      }
+      .steps-panel {
+        padding: 24px 24px 48px;
+        background: var(--bg-step);
+      }
+      .step {
+        min-height: auto;
+        padding: 32px 0 32px 20px;
+        opacity: 1;
+      }
+      .step.active { border-left-color: var(--accent-lt); }
+    }
+    @media (max-width: 540px) {
+      .hero-content { padding: 0 24px 52px; }
+      .hero-scroll-hint { right: 24px; }
+      .prose { padding: 48px 20px; }
+      .map-section { padding: 48px 20px 56px; }
+      .map-counts { margin-left: 0; flex-basis: 100%; order: 10; font-size: 12px; }
+    }
+
+    /* ── Methodology accordion (data-bit-1 style) ──────────────── */
+    .methodology {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #2a2a2a;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbf9f5;
+      margin: 32px 0;
+      padding: 0 22px;
+    }
+    .methodology > *:not(summary) { padding-left: 0; padding-right: 0; }
+    .methodology[open] { padding-bottom: 8px; }
+    .methodology summary {
+      list-style: none;
+      cursor: pointer;
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 700;
+      color: var(--text);
+      padding: 18px 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .methodology summary::-webkit-details-marker { display: none; }
+    .methodology summary::after {
+      content: "▾";
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 400;
+      transition: transform 0.2s ease;
+      margin-left: 12px;
+    }
+    .methodology[open] summary::after { transform: rotate(180deg); }
+    .methodology summary:hover { color: var(--accent); }
+    .methodology h3 {
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 26px 0 8px;
+    }
+    .methodology p {
+      margin: 0 0 14px;
+      text-align: left;
+      hyphens: auto;
+    }
+    .methodology ul,
+    .methodology ol {
+      margin: 0 0 14px;
+      padding-left: 22px;
+      color: #2a2a2a;
+      font-size: 11pt;
+    }
+    .methodology li { margin-bottom: 6px; font-size: 11pt; }
+    .methodology strong { color: var(--text); }
+    .methodology a {
+      color: var(--accent);
+      border-bottom-color: #e2cccd;
+    }
+    .methodology a:hover { border-bottom-color: var(--accent); }
+    .methodology code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 12.5px;
+      background: #f1efeb;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════
+       HERO
+       ════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <video class="hero-bg" autoplay muted loop playsinline preload="auto">
+      <source src="data/visual/hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-kicker">Final Project · E1493 Data Journalism 2026 · Hertie School</div>
+      <h1>The Cyclone Harry on the Central Mediterranean migration route</h1>
+      <p class="deck">In late January 2026, the Mediterranean cyclone moved across the Strait of Sicily as an unspecified number of people attempted to cross the sea from Tunisia. More than a thousand were reported dead or missing.</p>
+      <p class="hero-byline"><strong>Giorgio Coppola</strong> &nbsp;·&nbsp; 19 May 2026</p>
+      <p class="hero-credit">Footage: <a href="https://www.youtube.com/watch?v=triom_MRq3A">TG2000, Migranti, Mediterranea: 'Mille morti in mare per ciclone Harry'</a> (2 February 2026), via YouTube.</p>
+    </div>
+    <div class="hero-scroll-hint">Scroll</div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       INTRO TEXT
+       ════════════════════════════════════════════════════ -->
+  <section class="text-section">
+    <div class="prose">
+      <p class="lede">At the end of January 2026, Cyclone Harry crossed Southern Italy and the North African coast. In the Sicilian town of <a href="https://www.theguardian.com/world/2026/feb/09/anger-despair-sicilian-town-crumbles-landslide-niscemi">Niscemi, a landslide</a> destroyed buildings and forced more than 1,600 people to evacuate, but killed no one. A few miles away, at sea, the same days unfolded differently: more than a thousand people were reported dead or missing in the Central Mediterranean, right after the passage of the storm. Over the following weeks, a handful of anonymous bodies washed ashore on the beaches of Sicily and Calabria.</p>
+      <p>The only known survivor from one of these boats was Ramadan Konte, from Sierra Leone. According to his testimony, <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">reported by Mediterranea Saving Humans</a>, he left Sfax on a boat carrying around 50 people. During the storm, the boat capsized. Konte survived for more than 24 hours in the open sea before being rescued by the merchant ship <em>Star</em>, captained by Ahmed Omar Shafik, off the east coast of Tunisia and south of Malta. When he was pulled aboard, bodies were visible in the water around him. That day, he lost his brother, his brother's wife, and his nephew.</p>
+      <figure>
+        <img src="data/visual/rescue-22-jan-2026.png"
+             alt="Rescue at sea: people on the deck of a ship pulling a person wearing a lifebuoy up from the water.">
+        <figcaption><strong>The only survivor.</strong> The rescue of Ramadan Konte, 22 January 2026. <em>Source: Refugees in Libya, screenshot from <a href="https://www.instagram.com/reels/DUAaqAADDk6/">Instagram reel</a> (2026).</em></figcaption>
+      </figure>
+      <p>The Central Mediterranean route is known as the deadliest migratory sea route worldwide. Since 2014, the <a href="https://missingmigrants.iom.int/region/mediterranean">International Organization for Migration's Missing Migrants Project</a> has documented tens of thousands of deaths and disappearances in the Mediterranean, most of them on this route. In 2025 alone, more than 1,300 people lost their lives there. Cyclone Harry caused <a href="https://www.avvenire.it/attualita/la-denuncia-dellong-oltre-mille-migranti-dispersi-durante-il-ciclone-harry_104016">a similar loss in about a week</a>, with waves reaching seven metres and winds above 54 knots. Yet the main causes of death are not extreme weather conditions alone, but overloaded and unseaworthy boats, the lack of rescue vessels, and, most critically, the absence of legal migration options. These factors are shaped by specific policy choices that the European Union has pursued for decades.</p>
+      <p>First and foremost, the EU has increasingly restricted and criminalized rescue at sea. This matters because rescue capacity directly affects the chances of survival. When Italy scaled back its Mare Nostrum operation and replaced it with the smaller EU-led Triton mission, mortality rates on the route rose sharply, as Charles Heller and Lorenzo Pezzani documented in their report <a href="https://content.forensic-architecture.org/wp-content/uploads/2023/04/2016_Report_Death-By-Rescue.pdf">Death by Rescue</a>. This was not an unforeseeable outcome: <a href="https://www.europarl.europa.eu/RegData/etudes/BRIE/2021/659442/EPRS_BRI%282021%29659442_EN.pdf">EU policymakers had been warned in advance</a> that reducing search-and-rescue capacity would increase the risk of death at sea. The legal scholar Violeta Moreno-Lax describes this logic as <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3623029">“interdiction by omission”</a>: when destination states delegate, or externalize, their duty to rescue to third countries or private actors that cannot — or will not — fulfil it, non-rescue itself becomes a tool of border control. In a related article on <a href="https://www.cambridge.org/core/journals/international-and-comparative-law-quarterly/article/securitization-of-search-and-rescue-at-sea-the-response-to-boat-migration-in-the-mediterranean-and-offshore-australia/A13E77F859B6A2CB8CE8A44B34FE0DFB">the securitization of search and rescue</a>, she shows how this transformation has turned humanitarian obligations into instruments of migration management.</p>
+      <p>The standard counter-argument — that rescue ships act as a “pull factor” — does not hold up under quantitative scrutiny. In a study of Libya-to-Italy crossings, Eugenio Cusumano and Matteo Villa found <a href="https://www.ispionline.it/en/publication/sea-rescue-ngos-pull-factor-irregular-migration-24468">no relationship between NGO presence at sea and the number of people leaving Libyan shores</a>. The only statistically significant predictors of departures were weather conditions and political stability in Libya. A more recent study by Alejandra Rodríguez Sánchez and co-authors, published in <em>Scientific Reports</em>, reached the same conclusion for the Central Mediterranean route over the period 2011–2020: <a href="https://www.nature.com/articles/s41598-023-38119-4">state and private search-and-rescue operations did not increase migration flows</a>. Variation in crossings was instead associated with conflicts in countries of origin and transit, commodity prices, currency exchange rates, natural disasters, and weather conditions. Rescue, in other words, is a response to migration flows — not their cause. When NGO ships are obstructed, delayed, or criminalized, it is not departures that change, but survival rates.</p>
+      <p>This is what externalization looks like in practice. On these very same days of the tragedy, the 21st of January 2026, the <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">EU delivered over 21 million euros' worth of new land and sea border-control equipment to Tunisian authorities</a>. The transfer was the most recent step in a policy framework formalized by the 2016 agreement with Turkey, the 2017 Memorandum of Understanding (MoU) with Libya, the 2023 MoU with Tunisia, and cooperation agreements with Morocco and Algeria.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       VIZ INTRO — frames the scrolly that follows
+       ════════════════════════════════════════════════════ -->
+  <section class="viz-intro">
+    <div class="viz-intro-inner">
+      <div class="section-label">The Cyclone Harry over the Central Mediterranean migration route</div>
+      <p>In the visualization that follows, Cyclone Harry moves across the Central Mediterranean between 12 January and 17 February 2026. Below the animation you can toggle between two views of the storm: the infrared satellite image, which shows cloud tops from above, and the wind and pressure data, which traces the cyclone's circulation. The black circles that appear over the sea mark events recorded by <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">UNITED for Intercultural Action</a>, a network that has documented migrant deaths at Europe's borders since 1993.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       SCROLL SCENE — sticky video + narrative steps
+       ════════════════════════════════════════════════════ -->
+  <section class="scroll-scene" id="scroll-scene">
+
+    <!-- Left: sticky video panel -->
+    <div class="sticky-panel" id="sticky-panel">
+      <div class="player">
+        <video id="cyclone-video" preload="auto" playsinline muted>
+          <source id="cyclone-video-source" src="output/video/cyclone_harry_ir_full.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="video-toggle">
+        <span class="label">View:</span>
+        <button class="source-btn active" data-source="ir" data-src="output/video/cyclone_harry_ir_full.mp4">Infrared satellite</button>
+        <button class="source-btn" data-source="wind" data-src="output/video/cyclone_harry_full.mp4">Wind &amp; pressure</button>
+      </div>
+      <p class="panel-caption">
+        <strong>Each circle</strong> marks a recorded event; size scales with the dead or missing.
+        <span id="caption-source">Meteosat SEVIRI 10.8 µm cloud-top temperature — white/magenta = deepest convection, grey = low cloud or sea. Toggle for the wind &amp; pressure view.</span>
+      </p>
+    </div>
+
+    <!-- Right: scrolling narrative steps -->
+    <div class="steps-panel">
+
+      <div class="step" id="step-0" data-time="0">
+        <div class="step-number">12 January 2026</div>
+        <h3>Departures begin</h3>
+        <p>In the days before the shipwrecks, <a href="https://www.infomigrants.net/en/post/69058/life-in-tunisia-is-getting-worse-every-day-a-young-senegalese-who-lost-everything-in-the-destruction-of-his-shelter">testimonies from Sfax</a> described raids, military pressure, and the destruction of informal settlements in the olive groves around the city. According to these accounts, controls on the beaches appeared to relax at the same time, creating a window in which many boats could leave despite the dangerous weather conditions.</p>
+        <p>The situation in Tunisia helps explain why so many people may have left under such dangerous conditions. People do not always choose when to cross; they cross because staying has become impossible. <a href="https://www.hrw.org/news/2023/07/19/tunisia-no-safe-haven-black-african-migrants-refugees">Human Rights Watch</a> has documented abuses by Tunisian security forces against Black African migrants, refugees, and asylum seekers, including beatings, arbitrary arrests, forced evictions, and collective expulsions. <a href="https://www.amnesty.org/en/latest/news/2025/11/tunisia-rampant-violations-against-refugees-migrants-eu-risks-complicity/">Amnesty International </a> has warned that EU cooperation with Tunisia risks complicity when migration control is prioritized over protection.</p>
+        <p class="note">The animation shows the full 37-day window, from 12 January to 17 February 2026. Black circles accumulate as incidents are recorded. Scroll on to advance the animation.</p>
+      </div>
+
+      <div class="step" id="step-1" data-time="6.6">
+        <div class="step-number">21 January 2026</div>
+        <h3>The cyclone reaches its peak</h3>
+        <p>On 21 January, Cyclone Harry intensified over the Strait of Sicily. Sustained winds exceeded 80 km/h and wave heights rose sharply across the crossing zone. Multiple boats in the water at the time capsized or were swamped.</p>
+        <p>According to <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">Refugees in Libya</a> and <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">Mediterranea Saving Humans</a>, an official maritime alert was transmitted through the Inmarsat network by the Italian Coast Guard’s Maritime Rescue Coordination Centre in Rome. The alert, dated 24 January 2026, referred to eight separate search-and-rescue cases: eight boats that had left Sfax between 14 and 21 January, carrying about 380 people in total. As of that date, none of those boats had been found, and no confirmed rescues linked to those eight cases had been reported. But the official alert appears to capture only part of the disaster. Testimonies collected in Tunisia by Refugees in Libya from families of people who disappeared after leaving the Sfax area suggest that the number of missing may have been closer to 1,000.</p>
+      </div>
+
+      <div class="step" id="step-2" data-time="13.3">
+        <div class="step-number">February 2026</div>
+        <h3>Bodies wash ashore</h3>
+        <p>In the weeks after the storm, <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">14 bodies were recovered along the coasts of Sicily and Calabria</a>. Some arrived on beaches in Scalea, Amantea, and Tropea; others were found near Pantelleria, San Vito Lo Capo, Marsala, Trapani, Petrosino, and Custonaci.</p>
+        <p>The visualization follows the Calabrian coast as the bodies appear on shore. Many had no documents. Activists, local authorities, and forensic teams tried to identify them. Most will remain unnamed.</p>
+      </div>
+
+      <div class="step" id="step-3" data-time="24">
+        <div class="step-number">17 February 2026</div>
+        <h3>Over a thousand dead or missing</h3>
+        <p>By mid-February, UNITED for Intercultural Action had recorded 20 incidents linked to Cyclone Harry, accounting for 1,109 deaths. The IOM’s Missing Migrants Project registered 25 events over the same period, with 499 people recorded as dead or missing. The actual toll is likely higher, as many bodies are never recovered.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       MAP SECTION
+       ════════════════════════════════════════════════════ -->
+  <div class="band"></div>
+
+  <section class="map-section">
+    <div class="map-header">
+      <div class="section-label">What the data captured</div>
+      <p class="note">The following interactive map shows the incidents that have been identified as linked to the passage of Cyclone Harry. Hovering over a black bubble shows information about each specific incident; toggling between IOM and UNITED shows how the two organizations classify and count incidents differently.</p>
+    </div>
+
+    <div class="map-figure">
+      <div id="incident-map"
+           role="img"
+           aria-label="Interactive map of recorded migrant death events in the central Mediterranean between 12 January and 17 February 2026.">
+      </div>
+      <div class="map-toggle">
+        <span class="label">Source:</span>
+        <button class="layer-btn active" data-source="united">UNITED</button>
+        <button class="layer-btn" data-source="iom">IOM</button>
+        <div class="map-counts">
+          <span class="val records-val">—</span> recorded events
+          <span class="sep">·</span>
+          <span class="val deaths-val">—</span> estimated dead or missing
+        </div>
+      </div>
+    </div>
+    <p class="map-figcaption"><strong>Sources differ in methodology.</strong> UNITED's <em>List of Refugee Deaths</em> and IOM's Missing Migrants Project recorded events in the same time window compared. Hover a circle for incident details, toggle the source to compare, move across the map to explore.</p>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       DISCUSSION
+       ════════════════════════════════════════════════════ -->
+  <section class="text-section">
+    <div class="prose">
+      <p>The figures differ because the organizations collect and classify deaths in different ways. The IOM’s Missing Migrants Project records each incident through a hierarchy of evidence: official and forensic records where available, then media reports, NGO sources, and survivor testimony. It publishes a documented minimum for events it can verify, often through more than one source. This makes the dataset conservative by design. UNITED for Intercultural Action follows a different approach. Since 1993, its List of Refugee Deaths has recorded deaths linked to European border policy, using a wider evidentiary base that includes member organizations, families, media reports, and civil-society networks. Its definition is also broader: it includes deaths at sea, at land borders, in detention, and after arrival.</p>
+      <p>Between these two datasets are the organizations that witness events as they happen: rescue NGOs such as Mediterranea, SOS Méditerranée, and Sea-Watch; the Alarm Phone distress hotline; and activist networks such as Refugees in Libya. Their incident logs, distress calls, and survivor testimonies often feed into later counts. For events like the January 2026 crossings, where many boats left no survivors, these sources may be the only ones available. The underlying problem is what researchers call “invisible shipwrecks”: boats that leave shore, disappear without survivors, and leave no official trace. This is why all these figures should be read as minimum estimates. The actual number is likely higher.</p>
+      
+      <div class="section-label">How to identify the bodies, and why it is important</div>
+      
+      <p>Identifying the dead is extremely difficult. Bodies recovered after days or weeks at sea may be too decomposed for visual recognition. There is no international DNA comparison system, and post-mortem procedures in Italy remain inconsistent. The result is large-scale anonymity.</p>
+      <p>The technical capacity exists, but it is not applied systematically. <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">Cristina Cattaneo and the LABANOF forensic anthropology laboratory at the University of Milan</a> have shown that even decomposed remains can sometimes be identified when post-mortem data are collected properly and relatives are able to provide ante-mortem information. In the case of the October 2013 Lampedusa shipwreck, 39 of the 366 recovered bodies were positively identified. Cattaneo and her co-authors have argued that what is missing is not only technical expertise, but a legal framework: mandatory post-mortem data collection, a national database linking anthropological, genetic, and medico-legal records, and international procedures for comparing data with families abroad.</p>
+      <p>After the Cyclone Harry recoveries, four organizations — Mem.Med, ASGI, Mediterranea Saving Humans, and Alarm Phone — <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">called on Italian authorities</a> to apply this approach. They asked for DNA and fingerprints to be collected from the bodies, for standard post-mortem identification forms to be completed, for each body to be entered in the <em>Registro Nazionale dei Cadaveri Non Identificati</em>, and for families abroad to be able to submit comparative DNA. The problem, Mem.Med lawyer Serena Romano <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">argued</a>, is not technical capacity but that there is “zero political will”: by failing to identify the dead, she said, authorities allow these deaths to be made invisible. The Italian government has not responded.</p>
+      <p>The same demand was <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">raised again in July 2025</a> by ASGI, EMERGENCY, Sea-Watch, and Mem.Med, after two people recovered in Libyan search-and-rescue waters were buried before identification could take place. Without these procedures, people disappear twice: first at sea, and then again in the administrative silence that follows.</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       SOURCES
+       ════════════════════════════════════════════════════ -->
+  <section class="sources-section">
+    <div class="prose">
+
+      <!-- ── Methodology accordion ── -->
+      <details class="methodology">
+        <summary>Data and methodology</summary>
+
+        <h3>1. Data sources</h3>
+        <p>This piece is built from five datasets: two meteorological / satellite raster products, two incident lists of recorded migrant deaths, and one set of administrative-zone polygons. Every dataset used in the article is listed below.</p>
+        <ul>
+          <li><strong>ERA5 hourly reanalysis</strong> — 10 m wind, mean sea-level pressure and significant wave height over the Mediterranean, 0.25° grid. Source: <a href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a>, retrieved through the <code>cdsapi</code> client (free CDS account required).</li>
+          <li><strong>Meteosat Second Generation (MSG) Spinning Enhanced Visible and InfraRed Imager (SEVIRI), channel IR_108</strong> — 10.8 µm cloud-top brightness temperature, cropped to the Mediterranean at 3-hourly cadence. Source: <a href="https://data.eumetsat.int/">European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Data Store</a>, retrieved through the <code>eumdac</code> client (HRSEVIRI usage license required).</li>
+          <li><strong>UNITED for Intercultural Action — <em>List of Refugee Deaths</em></strong> — Network-compiled list of refugee and migrant deaths at Europe's borders since 1993. Filtered to the 20 entries whose cause-of-death description explicitly names Cyclone Harry (1,109 deaths). The raw data is <strong>not redistributed</strong> in this repository; the filtered CSV is available on request. Source: <a href="https://unitedagainstrefugeedeaths.eu/">unitedagainstrefugeedeaths.eu</a>.</li>
+          <li><strong>IOM Missing Migrants Project</strong> — Incident-level deaths and disappearances of migrants globally, May 2026 snapshot. Filtered to the Central Mediterranean route between 14 January and 17 February 2026 (25 events, 499 dead or missing). The raw data is <strong>not redistributed</strong> in this repository; the filtered CSV is available on request. Source: <a href="https://missingmigrants.iom.int/">missingmigrants.iom.int</a>.</li>
+          <li><strong>IMO Search-and-Rescue zone polygons</strong> — Boundary polygons for the Italian, Maltese, Tunisian and Libyan SAR zones, parsed from the official Geography Markup Language (GML) files at the <a href="https://gisis.imo.org/">IMO GISIS Global SAR Plan</a> portal (registration required).</li>
+          <li><strong>CartoDB Voyager (no labels)</strong> — Basemap tiles. © OpenStreetMap contributors, used under ODbL.</li>
+        </ul>
+
+        <h3>2. The infrared satellite animation</h3>
+        <p>The first animation shows what the Meteosat satellite saw looking down at the storm. The data come from the MSG SEVIRI instrument on board Meteosat, operated by EUMETSAT, which measures the temperature of cloud tops in the infrared. Cold cloud tops (shown in white and magenta) indicate tall, active convection — the engine of the storm. Warm values (grey) indicate low cloud or the sea surface. This is a direct satellite observation, not a model output. The satellite takes a full-disk image of Earth every 15 minutes; the animation uses one frame every three hours.</p>
+
+        <h3>3. The wind &amp; pressure animation</h3>
+        <p>The second animation shows the same period from a different angle: how Cyclone Harry developed and moved across the Central Mediterranean between 12 January and 17 February 2026. The colour shading represents wind speed — from calm (white) through moderate (green/yellow) to intense (orange/red) — while the contour lines trace atmospheric pressure and their concentric pattern marks the cyclone's centre. Both variables come from ERA5, a global atmospheric reanalysis produced by the Copernicus Climate Change Service. ERA5 is not a satellite measurement: it is a computational reconstruction of the state of the atmosphere, combining observational data from many sources with a numerical weather model to produce a consistent gridded dataset going back to 1940. The animation samples one frame every three hours, matching the satellite cadence. Both animations zoom progressively into the coast of Calabria from 1 February onwards, where bodies washed ashore in the weeks following the storm.</p>
+
+        <h3>4. The incident data: UNITED for Intercultural Action</h3>
+        <p>UNITED for Intercultural Action has maintained its <em>List of Refugee Deaths</em> since 1993, documenting individual cases of people who have died at or because of the borders of Europe. The list is compiled from reports by a network of roughly 550 organisations across 48 countries, supplemented by journalists, researchers, and local experts. Each entry is individually verified and includes the date, location, number of deaths, and a brief description of the cause. For this article, the dataset was filtered to the 20 entries whose cause-of-death description explicitly names Cyclone Harry, yielding 1,109 recorded deaths. This filter is deliberate but limiting: it counts only events where the connection to the storm was explicitly documented at the time, and will miss cases where the link was never established or recorded.</p>
+
+        <h3>5. The incident data: IOM Missing Migrants Project</h3>
+        <p>The IOM Missing Migrants Project, run by the International Organization for Migration, tracks deaths and disappearances of migrants globally. It draws on a wider set of sources than UNITED — coast guard reports, IOM field offices, media, NGOs — and aims to record every incident in a given migration corridor within a given time window, regardless of whether a specific cause (such as a storm) has been attributed. For this article, the dataset (May 2026 snapshot) was filtered to the Central Mediterranean route between 14 January and 17 February 2026, producing 25 events totalling 499 dead or missing. This figure includes body recoveries that occurred days or weeks after the storm, along the coasts of Italy and Libya. The two datasets are not directly comparable and should not be summed: they answer different questions and use different definitions of what counts as an event.</p>
+
+        <h3>6. The interactive map</h3>
+        <p>Each circle on the map represents one recorded event in the relevant dataset. The size of the circle scales with the number of dead or missing reported for that event, so large circles indicate incidents with many casualties and small circles indicate one or a few. The map uses a proportional symbol approach: circles are not sized to match each other exactly, but to give a visual sense of the relative scale of each event. The Search and Rescue zone boundaries shown in grey indicate which country's coast guard has nominal responsibility for rescue operations in each area; they are provided as geographic context, not as a judgment about responsibility.</p>
+
+        <h3>7. Replication</h3>
+        <p>All code, data, and replication instructions are at <a href="https://github.com/data-journalism-26/final-project-giorgio_final">github.com/data-journalism-26/final-project-giorgio_final</a>.</p>
+      </details>
+
+      <div class="references-heading">References</div>
+      <ul class="references-list">
+        <li>Amnesty International. (2025, November 6). <em>Tunisia: Rampant violations against refugees and migrants expose EU's complicity risk.</em> <a href="https://www.amnesty.org/en/latest/news/2025/11/tunisia-rampant-violations-against-refugees-migrants-eu-risks-complicity/">amnesty.org</a></li>
+        <li>ASGI. (2025, July 18). <em>Dare un nome alle vittime della migrazione recuperate nel Mediterraneo centrale. La richiesta delle Ong per restituire dignità ai morti e conforto ai loro cari.</em> <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">asgi.it</a></li>
+        <li>Copernicus Climate Change Service. (2026). <em>ERA5 hourly data on single levels, 1940–present.</em> <a href="https://cds.climate.copernicus.eu/">cds.climate.copernicus.eu</a></li>
+        <li>EUMETSAT. (2026). <em>Meteosat MSG SEVIRI Level 1.5 data.</em> <a href="https://www.eumetsat.int/">eumetsat.int</a></li>
+        <li>The Guardian. (2026, February 9). <em>'We've lost everything': anger and despair in Sicilian town collapsing after landslide.</em> <a href="https://www.theguardian.com/world/2026/feb/09/anger-despair-sicilian-town-crumbles-landslide-niscemi">theguardian.com</a></li>
+        <li>Human Rights Watch. (2023, July 19). <em>Tunisia: No Safe Haven for Black African Migrants, Refugees.</em> <a href="https://www.hrw.org/news/2023/07/19/tunisia-no-safe-haven-black-african-migrants-refugees">hrw.org</a></li>
+        <li>Il Post. (2026, February 20). <em>Stanno riemergendo i corpi dei migranti morti in mare durante il ciclone Harry.</em> <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">ilpost.it</a></li>
+        <li>InfoMigrants. (2026, January 26). <em>EU delivers more migration control equipment to Tunisian National Guard.</em> <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">infomigrants.net</a></li>
+        <li>InfoMigrants. (2026, January 7). <em>'Life in Tunisia is getting worse every day': A young Senegalese who lost everything in the destruction of his shelter.</em> <a href="https://www.infomigrants.net/en/post/69058/life-in-tunisia-is-getting-worse-every-day-a-young-senegalese-who-lost-everything-in-the-destruction-of-his-shelter">infomigrants.net</a></li>
+        <li>IOM Missing Migrants Project. <em>Migration within the Mediterranean.</em> <a href="https://missingmigrants.iom.int/region/mediterranean">missingmigrants.iom.int/region/mediterranean</a></li>
+        <li>Lavialibera. (2026, February 24). <em>"Identificate i corpi": l'appello per dare un nome ai migranti uccisi dal ciclone Harry</em> (P. Valenti). <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">lavialibera.it</a></li>
+        <li>Mediterranea. (2026, February 2). <em>Potrebbero essere 1000 le persone disperse in mare durante il Ciclone Harry.</em> <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">mediterranearescue.org</a></li>
+        <li>Mixed Migration Centre. (2025, March 31). <em>Uncounted &amp; Unknown: Tracking deaths &amp; disappearances on the Atlantic &amp; other irregular migration routes.</em> <a href="https://mixedmigration.org/articles/uncounted-unknown-migrant-deaths-disappearances-atlantic/">mixedmigration.org</a></li>
+        <li>Refugees in Libya. (2026). <em>[Opening video, Instagram reel].</em> <a href="https://www.instagram.com/reels/DUAaqAADDk6/">instagram.com/reels/DUAaqAADDk6</a></li>
+        <li>Refugees in Libya. (2026, January 30). <em>Over 1,000 People Missing in the Mediterranean Following Cyclone Harry? What We Know — and What Remains Unaccounted For.</em> <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">refugeesinlibya.org</a></li>
+        <li>Rodríguez Sánchez, A., et al. (2023). <em>Search-and-rescue in the Central Mediterranean Route does not induce migration: Predictive modeling to answer causal queries in migration research.</em> Scientific Reports. <a href="https://www.nature.com/articles/s41598-023-38119-4">nature.com</a></li>
+        <li>Scientific American. (2017, August 9). <em>Giving Dead Migrants a Name.</em> <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">scientificamerican.com</a></li>
+        <li>TG2000. (2026, February 2). <em>Migranti, Mediterranea: "Mille morti in mare per ciclone Harry".</em> YouTube. <a href="https://www.youtube.com/watch?v=triom_MRq3A">youtube.com/watch?v=triom_MRq3A</a></li>
+        <li>UNITED for Intercultural Action. <em>Fatal Policies of Fortress Europe — About the United List of Deaths.</em> <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">unitedagainstrefugeedeaths.eu</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       SCRIPTS
+       ════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    // ── Scrolly cyclone video ───────────────────────────────────────
+    // CSS scroll-snap lands the user on each step. When a step
+    // becomes active:
+    //   • If we haven't yet reached this step's data-time, play the
+    //     video forward and pause at the target.
+    //   • If we've already passed it (user scrolled up), snap the
+    //     video back to the target's frame.
+    var video     = document.getElementById('cyclone-video');
+    var steps     = Array.from(document.querySelectorAll('.step'));
+    var stepTimes = steps.map(function (s) {
+      return parseFloat(s.dataset.time || '0');
+    });
+    var currentIdx = -1;
+    var pauseAt    = null;
+
+    // Poll via requestAnimationFrame (~60 Hz) so the pause lands within
+    // a single frame of the target. Plays at constant speed (no ramp).
+    var monitorOn = false;
+
+    function monitor() {
+      if (pauseAt === null) { monitorOn = false; return; }
+      if (video.currentTime >= pauseAt) {
+        video.pause();
+        video.currentTime = pauseAt;
+        pauseAt = null;
+        monitorOn = false;
+        return;
+      }
+      requestAnimationFrame(monitor);
+    }
+    function startMonitor() {
+      if (monitorOn) return;
+      monitorOn = true;
+      requestAnimationFrame(monitor);
+    }
+
+    function activeIdx() {
+      var trigger = window.innerHeight * 0.5;
+      var idx = 0;
+      for (var i = 0; i < steps.length; i++) {
+        if (steps[i].getBoundingClientRect().top <= trigger) idx = i;
+      }
+      return idx;
+    }
+
+    function applyStep(idx) {
+      if (!video.duration) return;          // wait for metadata
+      var target = stepTimes[idx];
+      if (!isFinite(target)) return;
+      target = Math.min(target, video.duration);
+
+      if (video.currentTime < target - 0.05) {
+        // Forward — play through to target, monitor loop pauses us there.
+        pauseAt = target;
+        if (video.paused) video.play().catch(function () {});
+        startMonitor();
+      } else {
+        // We're at or past the target — snap back and pause there.
+        pauseAt = null;
+        video.pause();
+        video.currentTime = target;
+      }
+    }
+
+    function update() {
+      var idx = activeIdx();
+      if (idx === currentIdx) return;
+      currentIdx = idx;
+      steps.forEach(function (s, i) { s.classList.toggle('active', i === idx); });
+      applyStep(idx);
+    }
+
+    var rafPending = false;
+    window.addEventListener('scroll', function () {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(function () { rafPending = false; update(); });
+    }, { passive: true });
+    window.addEventListener('resize', update);
+    video.addEventListener('loadedmetadata', function () {
+      if (currentIdx >= 0) applyStep(currentIdx); else update();
+    });
+
+    // ── Source toggle (infrared / wind & pressure) ──────────────────
+    var sourceEl      = document.getElementById('cyclone-video-source');
+    var captionSource = document.getElementById('caption-source');
+    var sourceButtons = document.querySelectorAll('.source-btn');
+    var CAPTION_TEXT  = {
+      ir:   "Meteosat SEVIRI 10.8 µm cloud-top temperature — white/magenta = deepest convection, grey = low cloud or sea. Toggle for the wind & pressure view.",
+      wind: "ERA5 wind speed (colour, km/h) and sea-level pressure (contours, hPa), 3-hourly. Toggle for the satellite view."
+    };
+
+    sourceButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (btn.classList.contains('active')) return;
+        sourceButtons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        captionSource.textContent = CAPTION_TEXT[btn.dataset.source];
+        sourceEl.src = btn.dataset.src;
+        pauseAt = null;
+        video.load();
+        video.addEventListener('loadedmetadata', function onLoaded() {
+          video.removeEventListener('loadedmetadata', onLoaded);
+          // Re-apply current step so the new video lands on the right frame.
+          if (currentIdx >= 0) applyStep(currentIdx);
+        });
+      });
+    });
+
+    update();
+  })();
+
+
+  // ══════════════════════════════════════════════════════════════════
+  // Interactive Leaflet map
+  // ══════════════════════════════════════════════════════════════════
+  window.addEventListener('load', function () {
+    if (typeof L === 'undefined') return;
+
+    var map = L.map('incident-map', {
+      center: [35.5, 13.0],
+      zoom: 7,
+      zoomSnap: 0.5,
+      scrollWheelZoom: false
+    });
+
+    L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+      {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 18
+      }
+    ).addTo(map);
+
+    map.on('focus', function () { map.scrollWheelZoom.enable(); });
+    map.on('blur',  function () { map.scrollWheelZoom.disable(); });
+
+    var unitedLayer = null;
+    var iomLayer    = null;
+
+    var bubbleStyle = {
+      fillColor: '#1A1A1A', color: '#000000',
+      weight: 1, fillOpacity: 0.62, opacity: 0.85
+    };
+
+    function radiusFor(n) {
+      return Math.max(4, Math.sqrt(Math.max(1, n)) * 1.6);
+    }
+
+    function tipUnited(p) {
+      return '<div class="meta"><strong>' + p.date + '</strong></div>'
+           + '<span class="deaths">' + p.n_deaths + '</span> dead or missing'
+           + (p.cause ? '<br><em>' + p.cause + '</em>' : '');
+    }
+    function tipIom(p) {
+      var loc = [p.location, p.country].filter(Boolean).join(', ');
+      return '<div class="meta"><strong>' + p.date + '</strong>' + (loc ? ' &middot; ' + loc : '') + '</div>'
+           + '<span class="deaths">' + p.n_dead_missing + '</span> dead or missing'
+           + (p.cause ? '<br><em>' + p.cause + '</em>' : '');
+    }
+
+    function buildLayer(geojson, sizeKey, tipFn) {
+      var sorted = {
+        type: geojson.type,
+        features: geojson.features.slice().sort(function (a, b) {
+          return (b.properties[sizeKey] || 0) - (a.properties[sizeKey] || 0);
+        })
+      };
+      return L.geoJSON(sorted, {
+        pointToLayer: function (feat, latlng) {
+          return L.circleMarker(latlng, Object.assign({},
+            bubbleStyle, { radius: radiusFor(feat.properties[sizeKey]) }));
+        },
+        onEachFeature: function (feat, layer) {
+          layer.bindTooltip(tipFn(feat.properties), {
+            className: 'incident-tip', sticky: true, direction: 'top', offset: [0, -4]
+          });
+        }
+      });
+    }
+
+    // SAR zones
+    fetch('data/sar_zones.geojson').then(function (r) { return r.json(); })
+      .then(function (geo) {
+        L.geoJSON(geo, {
+          style: {
+            color: '#7a7a7a', weight: 1,
+            fillColor: '#9a9a9a', fillOpacity: 0.07, opacity: 0.45,
+            dashArray: '3,3'
+          }
+        }).addTo(map);
+      });
+
+    // City + sea labels
+    var cities = [
+      { name: "Tunis",           lon: 10.18, lat: 36.81, dir: "left"  },
+      { name: "Sfax",            lon: 10.76, lat: 34.74, dir: "left"  },
+      { name: "Tripoli",         lon: 13.18, lat: 32.89, dir: "below" },
+      { name: "Algiers",         lon:  3.06, lat: 36.75, dir: "right" },
+      { name: "Palermo",         lon: 13.36, lat: 38.12, dir: "below" },
+      { name: "Catania",         lon: 15.09, lat: 37.50, dir: "right" },
+      { name: "Cagliari",        lon:  9.11, lat: 39.22, dir: "below" },
+      { name: "Valletta",        lon: 14.51, lat: 35.90, dir: "right" },
+      { name: "Lampedusa",       lon: 12.60, lat: 35.50, dir: "right" },
+      { name: "Reggio Calabria", lon: 15.65, lat: 38.11, dir: "right" },
+      { name: "Benghazi",        lon: 20.06, lat: 32.12, dir: "left"  },
+      { name: "Napoli",          lon: 14.23, lat: 40.85, dir: "above" }
+    ];
+    var sarLabels = [
+      { name: "Italian SAR",  lon: 12.0, lat: 39.0 },
+      { name: "Maltese SAR",  lon: 17.5, lat: 35.2 },
+      { name: "Tunisian SAR", lon: 10.4, lat: 37.4 },
+      { name: "Libyan SAR",   lon: 17.5, lat: 32.9 }
+    ];
+
+    function plainLabel(latlng, html, cls) {
+      return L.marker(latlng, {
+        icon: L.divIcon({ html: html, className: cls, iconSize: [1,1], iconAnchor: [0,0] }),
+        interactive: false, keyboard: false
+      });
+    }
+    cities.forEach(function (c) {
+      plainLabel([c.lat, c.lon],
+        '<span class="city-dot"></span><span class="city-name">' + c.name + '</span>',
+        'map-city dir-' + c.dir).addTo(map);
+    });
+    sarLabels.forEach(function (s) {
+      plainLabel([s.lat, s.lon],
+        '<span class="sar-name">' + s.name + '</span>',
+        'map-sar').addTo(map);
+    });
+
+    // Counters
+    var counts = { united: null, iom: null };
+    var currentSource = 'united';
+
+    function summarize(geo, key) {
+      return {
+        records: geo.features.length,
+        deaths: geo.features.reduce(function (s, f) {
+          var v = f.properties[key];
+          return s + (typeof v === 'number' ? v : (parseInt(v, 10) || 0));
+        }, 0)
+      };
+    }
+
+    var countsRoot = document.querySelector('.map-counts');
+    function renderCounter() {
+      var c = counts[currentSource];
+      if (!c || !countsRoot) return;
+      countsRoot.querySelector('.records-val').textContent = c.records.toLocaleString();
+      countsRoot.querySelector('.deaths-val').textContent  = c.deaths.toLocaleString();
+    }
+
+    var unitedReady = fetch('data/incidents_united.geojson').then(function (r) { return r.json(); })
+      .then(function (geo) {
+        unitedLayer = buildLayer(geo, 'n_deaths', tipUnited).addTo(map);
+        counts.united = summarize(geo, 'n_deaths');
+        if (currentSource === 'united') renderCounter();
+      });
+    var iomReady = fetch('data/incidents_iom.geojson').then(function (r) { return r.json(); })
+      .then(function (geo) {
+        iomLayer = buildLayer(geo, 'n_dead_missing', tipIom);
+        counts.iom = summarize(geo, 'n_dead_missing');
+        if (currentSource === 'iom') renderCounter();
+      });
+
+    document.querySelectorAll('.map-toggle .layer-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.map-toggle .layer-btn').forEach(function (b) {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        currentSource = btn.dataset.source;
+        if (unitedLayer && map.hasLayer(unitedLayer)) map.removeLayer(unitedLayer);
+        if (iomLayer    && map.hasLayer(iomLayer))    map.removeLayer(iomLayer);
+        Promise.all([unitedReady, iomReady]).then(function () {
+          if (currentSource === 'united' && unitedLayer) unitedLayer.addTo(map);
+          if (currentSource === 'iom'    && iomLayer)    iomLayer.addTo(map);
+          renderCounter();
+        });
+      });
+    });
+  });
+  </script>
+</body>
+</html>

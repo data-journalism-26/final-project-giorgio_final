@@ -1,0 +1,31 @@
+# Large regenerable / downloaded data (require their own credentials)
+data/era5/
+data/tiles/
+data/geodata/
+data/msg/
+output/figures/
+
+# Raw IOM / UNITED incident data — not redistributable, obtain from the source
+data/iom_*.csv
+data/united_*.csv
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rcheck/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
+
+# CDS API credentials
+.cdsapirc
