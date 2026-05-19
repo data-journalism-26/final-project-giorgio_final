@@ -149,8 +149,10 @@ base_theme <- theme_minimal(base_size = 11) +
   theme(panel.background = element_rect(fill = NA, colour = NA),
         panel.grid.major = element_line(colour = "grey92", linewidth = 0.2),
         panel.grid.minor = element_blank(),
-        plot.title    = element_text(size = 13, face = "bold"),
-        plot.subtitle = element_text(size = 9.5, colour = "grey45"),
+        plot.title    = element_blank(),
+        plot.subtitle = element_blank(),
+        plot.background = element_rect(fill = "white", colour = NA),
+        plot.margin   = margin(0, 0, 4, 0),
         axis.text     = element_blank(),
         axis.ticks    = element_blank(),
         legend.position = "bottom",
@@ -276,13 +278,11 @@ build_frame <- function(idx, frame_no) {
                             stroke = 1.0, alpha = 0.65),
         order = 3)) +
     coord_sf(xlim = ext$x, ylim = ext$y, expand = FALSE) +
-    labs(title = "Cyclone Harry over the Central Mediterranean migration route",
-         x = NULL, y = NULL) +
-    base_theme +
-    theme(plot.title = element_text(size = 16, face = "bold", colour = "grey5"))
+    labs(x = NULL, y = NULL) +
+    base_theme
 
   out <- file.path(FRAMES, sprintf("frame_%04d.png", frame_no))
-  ggsave(out, p, width = 9, height = 9, dpi = 150)
+  ggsave(out, p, width = 8.5, height = 9, dpi = 150)
   invisible(out)
 }
 

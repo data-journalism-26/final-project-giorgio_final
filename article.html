@@ -17,6 +17,7 @@
       --bg:          #fafafa;
       --bg-dark:     #0f0f0f;
       --bg-step:     #161616;
+      --wide-width:  min(1400px, calc(50vw + 380px));
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,8 +28,6 @@
       font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
       font-size: 11pt;
       line-height: 1.65;
-      max-width: 1200px;
-      margin: 0 auto;
     }
 
     /* ── Utilities ─────────────────────────────────────────────── */
@@ -45,15 +44,17 @@
       min-height: 100svh;
       display: flex;
       align-items: flex-end;
+      justify-content: center;
       overflow: hidden;
     }
     .hero-bg {
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: right 30%;
+      object-position: center;
       filter: grayscale(30%) brightness(0.45);
       z-index: 0;
     }
@@ -72,8 +73,9 @@
     .hero-content {
       position: relative;
       z-index: 2;
-      max-width: 780px;
-      padding: 0 48px 72px;
+      width: 100%;
+      max-width: var(--wide-width);
+      padding: 0 32px 72px;
     }
     .hero-kicker {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -149,7 +151,7 @@
     .prose {
       max-width: 760px;
       margin: 0 auto;
-      padding: 72px 32px;
+      padding: 40px 32px 24px;
     }
     .prose p {
       margin-bottom: 22px;
@@ -189,6 +191,8 @@
       display: flex;
       align-items: flex-start;
       position: relative;
+      max-width: var(--wide-width);
+      margin: 0 auto;
     }
 
     /* Left: sticky video panel */
@@ -212,8 +216,9 @@
     }
     .player video {
       display: block;
-      width: 100%;
+      width: 102%;
       height: auto;
+      margin-left: -1%;
     }
     .video-toggle {
       display: flex;
@@ -239,60 +244,7 @@
     .video-toggle button:hover { background: #2e2e2e; color: #e0e0e0; border-color: #444; }
     .video-toggle button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      background: #151515;
-      border-top: 1px solid #2a2a2a;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 12px;
-    }
-    .controls button {
-      background: #222;
-      border: 1px solid #333;
-      border-radius: 3px;
-      padding: 5px 9px;
-      cursor: pointer;
-      color: #ccc;
-      font-size: 12px;
-      min-width: 32px;
-      transition: background 0.12s;
-    }
-    .controls button:hover { background: #2e2e2e; color: #fff; }
-    .controls .scrub {
-      flex: 1;
-      -webkit-appearance: none;
-      appearance: none;
-      height: 3px;
-      background: #333;
-      border-radius: 2px;
-      outline: none;
-    }
-    .controls .scrub::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 13px; height: 13px;
-      border-radius: 50%;
-      background: var(--accent-lt);
-      cursor: pointer;
-    }
-    .controls .scrub::-moz-range-thumb {
-      width: 13px; height: 13px;
-      border-radius: 50%;
-      background: var(--accent-lt);
-      cursor: pointer;
-      border: none;
-    }
-    .controls .time {
-      color: #666;
-      font-variant-numeric: tabular-nums;
-      min-width: 80px;
-      text-align: right;
-      font-size: 11px;
-    }
-
-    /* Panel caption below controls */
+    /* Panel caption below the video */
     .panel-caption {
       margin-top: 14px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -361,15 +313,28 @@
     /* ── MAP SECTION ────────────────────────────────────────────── */
     .map-section {
       background: var(--bg);
-      padding: 32px 32px 80px;
+      padding: 40px 32px 16px;
     }
-    .map-section .section-label {
+    .section-label {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
+      font-weight: 700;
       color: var(--accent);
       margin-bottom: 10px;
+    }
+    /* Standalone section-label above the scroll-scene (dark body background) */
+    body > .section-label {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 32px 32px;
+      color: var(--accent-lt);
+    }
+    /* Section-label used inside body prose: needs top breathing room */
+    .prose .section-label {
+      margin-top: 36px;
+      margin-bottom: 14px;
     }
     .map-section h2 {
       font-size: 26px;
@@ -388,7 +353,7 @@
       margin-bottom: 36px;
     }
     .map-figure {
-      max-width: 800px;
+      max-width: calc(var(--wide-width) - 64px);
       margin: 0 auto;
     }
     #incident-map {
@@ -434,14 +399,18 @@
       color: var(--muted);
       line-height: 1.55;
       padding: 10px 4px 0;
-      max-width: 800px;
+      max-width: calc(var(--wide-width) - 64px);
       margin: 0 auto;
     }
     .map-figcaption strong { color: var(--text); }
 
     .map-header {
-      max-width: 800px;
-      margin: 0 auto;
+      max-width: 760px;
+      margin: 0 auto 24px;
+      padding: 0 32px;
+    }
+    .map-section .map-header > p {
+      margin-top: 6px;
     }
 
     /* Leaflet tooltip */
@@ -510,8 +479,8 @@
       border-top: 1px solid var(--line);
     }
     .sources-section .prose {
-      padding-top: 48px;
-      padding-bottom: 80px;
+      padding-top: 32px;
+      padding-bottom: 72px;
     }
     .sources-section p {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -528,7 +497,7 @@
     /* ── Section divider (dark→light) ─────────────────────────── */
     .band {
       background: var(--bg);
-      height: 56px;
+      height: 32px;
     }
 
     /* ── RESPONSIVE ─────────────────────────────────────────────── */
@@ -651,7 +620,7 @@
     <div class="hero-content">
       <div class="hero-kicker">Final Project · E1493 Data Journalism 2026</div>
       <h1>The Cyclone Harry on the Central Mediterranean migration route</h1>
-      <p class="deck">In late January 2026, a Mediterranean cyclone swept across the Strait of Sicily as hundreds of people attempted the sea crossing from Tunisia. More than a thousand were reported dead or missing.</p>
+      <p class="deck">In late January 2026, the Mediterranean cyclone crossed the Strait of Sicily as an unspecified number of people attempted to cross the sea from Tunisia. More than a thousand were reported dead or missing.</p>
       <p class="hero-byline"><strong>Giorgio Coppola</strong> &nbsp;·&nbsp; 19 May 2026</p>
       <p class="hero-credit">Opening video: Refugees in Libya, <a href="https://www.instagram.com/reels/DUAaqAADDk6/">Instagram reel</a> (2026)</p>
     </div>
@@ -663,17 +632,21 @@
        ════════════════════════════════════════════════════ -->
   <section class="text-section">
     <div class="prose">
-      <p class="lede">At the end of January 2026, Cyclone Harry swept across Southern Italy and the North African coast, causing intense damage across Sicily and Calabria, including a landslide in the town of Niscemi — where, almost miraculously, no one was killed. A related story, just few miles away, unfolded the same days on the water: more than a thousand people were reported missing or found dead in the Central Mediterranean, right after the passage of the storm. Over the following weeks, a handful of anonymous bodies washed ashore on the beaches of Sicily and Calabria.</p>
-      <p>They are only a few of the many who had departed from the Tunisian coast between the 14th and 21st of January 2026, attempting the Central Mediterranean Route to reach Italian shores. The reported figures are based on testimonies gathered in Tunisia by activists from Refugees in Libya and by the families of people who had not been heard from in days. The data were then consolidated by independent organizations including UNITED for Intercultural Action and the IOM's Missing Migrants Project.</p>
-      <p>The Central Mediterranean Route is considered the most dangerous migratory sea route in the world. Every year, hundreds of people die or disappear trying to cross roughly 300 kilometres of open sea. In this case, only one person survived. The cyclone was not the only cause — overloaded rubber dinghies, the absence of rescue vessels, the lack of legal pathways — but it was the trigger that turned a dangerous journey into a mass casualty event.</p>
-      <p>That one survivor was Ramadan Konte, a citizen of Sierra Leone. According to <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">his testimony</a>, reported by the NGO Mediterranea, he had departed from Sfax on one of the many boats leaving the Tunisian coast in those weeks, carrying around fifty people of different nationalities. The boat capsized during the storm. Konte survived for more than 24 hours in the open sea before being spotted by the merchant ship <em>Star</em>, captained by Ahmed Omar Shafik, east of Tunisia and south of Malta. As he was pulled aboard, bodies were visible floating in the water around him. From that single vessel he lost his brother, his brother's wife, his nephew, and at least 47 others. The other boats that departed Tunisia in those same days are presumed lost — their passengers among the more than a thousand reported dead or missing.</p>
+      <p class="lede">At the end of January 2026, Cyclone Harry crossed Southern Italy and the North African coast. In the Sicilian town of <a href="https://www.theguardian.com/world/2026/feb/09/anger-despair-sicilian-town-crumbles-landslide-niscemi">Niscemi, a landslide</a> destroyed buildings and forced more than 1,600 people to evacuate, but killed no one. A few miles away, at sea, the same days unfolded differently: more than a thousand people were reported dead or missing in the Central Mediterranean, right after the passage of the storm. Over the following weeks, a handful of anonymous bodies washed ashore on the beaches of Sicily and Calabria.</p>
+      <p>The only known survivor from one of these boats was Ramadan Konte, from Sierra Leone. According to his testimony, <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">reported by Mediterranea</a>, he left Sfax on a boat carrying around 50 people. During the storm, the boat capsized. Konte survived for more than 24 hours in the open sea before being rescued by the merchant ship <em>Star</em>, captained by Ahmed Omar Shafik, off the east coast of Tunisia and south of Malta. When he was pulled aboard, bodies were visible in the water around him. From that single boat, he lost his brother, his brother's wife, and his nephew.</p>
       <figure>
         <img src="data/visual/rescue-22-jan-2026.png"
              alt="Rescue at sea: people on the deck of a ship pulling a person wearing a lifebuoy up from the water.">
         <figcaption><strong>The only survivor.</strong> The rescue of Ramadan Konte, 22 January 2026. <em>Source: Refugees in Libya, screenshot from video.</em></figcaption>
       </figure>
+      <p>The Central Mediterranean route is known as the deadliest migratory sea route worldwide. Since 2014, <a href="https://missingmigrants.iom.int/region/mediterranean">IOM's Missing Migrants Project</a> has documented tens of thousands of deaths and disappearances, with the majority occurring on this route. In 2025 alone, over 1,300 people lost their lives there. Cyclone Harry caused <a href="https://www.avvenire.it/attualita/la-denuncia-dellong-oltre-mille-migranti-dispersi-durante-il-ciclone-harry_104016">a similar loss</a>, with waves reaching seven metres and winds over 54 knots in about a week. The primary causes of death are structural: overloaded rubber dinghies, unseaworthy boats, lack of rescue vessels, and most critically, the absence of legal migration options.</p>
+      <p>This matters because rescue capacity influences the possibility of survival. When Italy scaled back its Mare Nostrum operation, substituting it with the smaller EU-led Triton mission, mortality rates on the route increased dramatically (<a href="https://content.forensic-architecture.org/wp-content/uploads/2023/04/2016_Report_Death-By-Rescue.pdf">Heller &amp; Pezzani, 2016</a>) — a risk <a href="https://www.europarl.europa.eu/RegData/etudes/BRIE/2021/659442/EPRS_BRI%282021%29659442_EN.pdf">EU policymakers</a> had been warned about in advance. The legal scholar Violeta Moreno-Lax calls this "interdiction by omission": when destination states delegate (or "externalize") their duty to rescue to third countries or private actors that cannot — or will not — fulfil it, non-rescue itself becomes a deliberate tool of border control (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3623029">Moreno-Lax, 2020</a>; <a href="https://www.cambridge.org/core/journals/international-and-comparative-law-quarterly/article/securitization-of-search-and-rescue-at-sea-the-response-to-boat-migration-in-the-mediterranean-and-offshore-australia/A13E77F859B6A2CB8CE8A44B34FE0DFB">2018</a>).</p>
+      <p>The standard counter-argument — that rescue ships act as a "pull factor" — does not hold up under quantitative scrutiny. A regression analysis of Libya-to-Italy crossings found that the only statistically significant predictors of departures were weather conditions and political stability on the Libyan side; NGO presence had no significant effect (<a href="https://link.springer.com/article/10.1007/s10610-020-09464-1">Cusumano &amp; Villa, 2020</a>). A more recent causal study employing machine learning (<a href="https://www.nature.com/articles/s41598-023-38119-4">Rodríguez Sánchez et al., 2023</a>) reached the same conclusion for the Central Mediterranean route over 2011–2020: state and private rescue operations did not increase migration flows. What drives variation in crossings was conflicts in countries of origin and transit, alongside commodity prices, currency exchange rates, natural disasters, and weather conditions. Rescue, the paper concludes, is a response to the flow of migration — not its cause. When NGO ships are obstructed, delayed, or criminalized, it is not departures that change but survival rates.</p>
+      <p>This is what externalization looks like in practice. On these very same days of the tragedy, the 21st of January 2026, the <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">EU delivered over 21 million euros' worth of new land and sea border-control equipment to Tunisian authorities</a>. The transfer was the most recent step in a policy framework formalized by the 2016 agreement with Turkey, the 2017 MoU with Libya, the 2023 MoU with Tunisia, and cooperation agreements with Morocco and Algeria.</p>
     </div>
   </section>
+  
+  <div class="section-label">The Cyclone Harry over the Central Mediterranean route</div>
 
   <!-- ════════════════════════════════════════════════════
        SCROLL SCENE — sticky video + narrative steps
@@ -692,13 +665,6 @@
         <button class="source-btn active" data-source="ir" data-src="output/video/cyclone_harry_ir_full.mp4">Infrared satellite</button>
         <button class="source-btn" data-source="wind" data-src="output/video/cyclone_harry_full.mp4">Wind &amp; pressure</button>
       </div>
-      <div class="controls">
-        <button id="play-pause" aria-label="Play / pause">▶</button>
-        <button id="prev-frame" aria-label="Previous frame">⏮</button>
-        <button id="next-frame" aria-label="Next frame">⏭</button>
-        <input class="scrub" type="range" id="scrub" min="0" max="1" step="0.001" value="0" aria-label="Seek">
-        <span class="time" id="time-display">0s / —</span>
-      </div>
       <p class="panel-caption">
         <strong>Each circle</strong> marks a recorded event. Circle size scales with the number of dead or missing per incident.
         <span id="caption-source">Meteosat SEVIRI 10.8 µm cloud-top brightness temperature. White/magenta = coldest tops, deepest convection; grey = low cloud or sea surface.</span>
@@ -711,32 +677,32 @@
       <div class="step" id="step-0" data-time="0">
         <div class="step-number">12 January 2026</div>
         <h3>Departures begin</h3>
-        <p>In the weeks preceding the storm, hundreds of people prepared to leave Tunisia in small rubber dinghies and wooden boats. The Central Mediterranean Route — roughly 300 kilometres between the Tunisian and Libyan coasts and the Italian island of Lampedusa — is the world's most-documented deadly migration corridor.</p>
+        <p>In the days before the shipwrecks, <a href="https://www.infomigrants.net/en/post/69058/life-in-tunisia-is-getting-worse-every-day-a-young-senegalese-who-lost-everything-in-the-destruction-of-his-shelter">testimonies from Sfax</a> describe raids, military pressure, and the destruction of informal settlements in the olive groves around the city. According to these accounts, controls on the beaches were relaxed at the same time, allowing many boats to leave despite the bad weather.</p>
+        <p>The situation in Tunisia helps explain why so many people may have left under such dangerous conditions. People do not always choose when to cross, they cross because staying has become impossible. <a href="https://www.hrw.org/news/2023/07/19/tunisia-no-safe-haven-black-african-migrants-refugees">Human Rights Watch</a> documented abuses by Tunisian security forces against Black African migrants, refugees, and asylum seekers, including beatings, arbitrary arrests, forced evictions, and collective expulsions. <a href="https://www.amnesty.org/en/latest/news/2025/11/tunisia-rampant-violations-against-refugees-migrants-eu-risks-complicity/">Amnesty International</a> warned that EU cooperation with Tunisia risks complicity if it prioritizes containment over protection.</p>
         <p>The animation shows the full 37-day window, from 12 January to 17 February 2026. Black circles accumulate as incidents are recorded.</p>
-        <p class="note">Use the controls below the video to pause or scrub. Toggle between meteorological and satellite views.</p>
+        <p class="note">Scroll on to advance the animation. Toggle between meteorological and satellite views above.</p>
       </div>
 
       <div class="step" id="step-1" data-time="6.7">
-        <div class="step-number">22 January 2026 — Storm peak</div>
+        <div class="step-number">21 January 2026 — Storm peak</div>
         <h3>The cyclone reaches its peak</h3>
-        <p>On 22 January, Cyclone Harry intensified over the Strait of Sicily. Sustained winds exceeded 80 km/h and wave heights rose sharply across the crossing zone. Multiple boats in the water at the time capsized or were swamped.</p>
-        <p>Of the hundreds of people who had departed from Tunisia in the days prior, only a single person was pulled from the sea alive — rescued after being spotted by a ship, clinging to a lifebuoy. The photograph at the top of this page shows that moment.</p>
+        <p>On 21 January, Cyclone Harry intensified over the Strait of Sicily. Sustained winds exceeded 80 km/h and wave heights rose sharply across the crossing zone. Multiple boats in the water at the time capsized or were swamped.</p>
+        <p>According to <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">Mediterranea Saving Humans</a>, an official maritime alert was transmitted through the Inmarsat network by the Italian Coast Guard's Maritime Rescue Coordination Center in Rome. The alert, dated 24 January 2026, referred to eight separate SAR cases: eight boats that had left Sfax between 14 and 21 January, carrying about 380 people in total. As of that date, none of those boats had been found, and no confirmed rescues linked to those eight cases had been reported. However, testimonies collected in Tunisia by <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">Refugees in Libya</a> from families of people who had disappeared after leaving the Sfax area describe the number of missing persons during that day as closer to 1000.</p>
         <p>The satellite view above shows the cyclone from space: the coldest cloud tops (white and magenta) mark the deepest convection at the storm's centre. Toggle to the wind &amp; pressure view to see the same period through ERA5 meteorological data.</p>
       </div>
 
       <div class="step" id="step-2" data-time="13.3">
-        <div class="step-number">February 2026 — Calabria</div>
+        <div class="step-number">February 2026 — Bodies wash ashore</div>
         <h3>Bodies wash ashore</h3>
-        <p>In the weeks after the storm, the sea returned some of what it had taken. Bodies began washing up on the beaches of Lampedusa, Sicily, and the coast of Calabria — the toe of the Italian boot. The visualization zooms into the Calabrian coast as circles accumulate on shore.</p>
-        <p>Each body recovered represented a family waiting for news. Activists and forensic teams worked to identify the deceased, many of whom had no documentation. Most will remain unnamed.</p>
+        <p>In the weeks after the storm, <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">14 bodies were recovered along the coasts of Sicily and Calabria</a>. In Calabria, the dead reached the beaches of Scalea, Amantea, and Tropea. In Sicily, five were found in the sea around Pantelleria, with others at San Vito Lo Capo, Marsala — one body still wearing a life jacket — Trapani, Petrosino and Custonaci.</p>
+        <p>The visualization zooms into the Calabrian coast as circles accumulate on shore. Each body recovered represented a family waiting for news. Activists and forensic teams worked to identify the deceased, many of whom had no documentation. Most will remain unnamed.</p>
       </div>
 
       <div class="step" id="step-3" data-time="24" data-seek-threshold="13.3">
-        <div class="step-number">17 February 2026 — Final count</div>
+        <div class="step-number">17 February 2026</div>
         <h3>Over a thousand dead or missing</h3>
-        <p>By mid-February, UNITED for Intercultural Action had recorded 20 incidents directly linked to Cyclone Harry, accounting for 1,109 deaths. The IOM's Missing Migrants Project — which tracks a broader set of events including subsequent body recoveries along Italian and Libyan coasts — registered 25 events in the same window, totalling 499 dead or missing.</p>
+        <p>By mid-February, <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">UNITED for Intercultural Action</a> had recorded 20 incidents directly linked to Cyclone Harry, accounting for 1,109 deaths. The IOM's Missing Migrants Project registered 25 events in the same window, totalling 499 dead or missing.</p>
         <p>The real toll is almost certainly higher. Many boats never make it to a shore that could report them missing. Many bodies are never recovered.</p>
-        <p class="note">The discrepancy between UNITED and IOM reflects different methodologies, not different events. See the methodology note below.</p>
       </div>
 
     </div>
@@ -750,7 +716,7 @@
   <section class="map-section">
     <div class="map-header">
       <div class="section-label">What the data captured</div>
-      <p>UNITED counted only events linked to Cyclone Harry. IOM counted every Central Mediterranean incident in the same weeks. Their numbers don't agree.</p>
+      <p class="note">The following interactive map shows the incidents that have been identified as linked to the passage of Cyclone Harry. Hovering over the black bubble, it is possible to read information about each specific incident, and toggling from IOM to UNITED allows to visualize how the two organization classify and count incident differently.</p>
     </div>
 
     <div class="map-figure">
@@ -777,9 +743,13 @@
        ════════════════════════════════════════════════════ -->
   <section class="text-section">
     <div class="prose">
-      <p>[Body paragraph — Why the sources differ in their counts, and what that tells us about the limits of documentation at sea.]</p>
-      <p>[Body paragraph — The broader context: how the Central Mediterranean became the world's most documented deadly border, and what accountability, if any, has followed.]</p>
-      <p>[Closing paragraph — The one survivor. The 1,000 unnamed. What remains after the sea has moved on.]</p>
+      <p>The figures differ because the organizations that produce them operate differently, and both datasets are authoritative, though they show slightly different data. IOM's Missing Migrants Project, launched in 2014, builds each incident from a hierarchy of evidence — coast-guard and forensic records where available, then media reports, then NGO and survivor testimony — and publishes a documented minimum for each event it can verify through more than one source, which is quite restrictive. UNITED for Intercultural Action has been doing something different, and for longer: since 1993 its <em>List of Refugee Deaths</em> has recorded individual deaths attributable to European border policy, drawing on a wider evidentiary base (member organizations, families, media) and a broader definition that includes deaths at land borders, in detention, and after arrival. In between sit the actors who witness events at sea: NGO rescue ships such as Mediterranea, SOS Méditerranée and Sea-Watch, the Alarm Phone distress hotline, and activist networks like Refugees in Libya, whose incident logs and survivor testimonies feed into both datasets. For events like the January 2026 crossings, where most boats left no survivors, these civil-society sources are often the only ones that exist. The core problem is what researchers call "invisible shipwrecks": boats that leave shore, disappear with no survivors, and leave no trace. That's why all the estimates are minimum estimates, while <a href="https://mixedmigration.org/articles/uncounted-unknown-migrant-deaths-disappearances-atlantic/">the actual figures are most probably much higher</a>.</p>
+      
+      <div class="section-label">How to identify the bodies, and why it is important</div>
+      
+      <p>Identifying the dead is extremely difficult. Bodies recovered after days or weeks at sea may be decomposed beyond visual recognition. There is no international DNA comparison system, and post-mortem procedures on the Italian side are inconsistent. The result is large-scale anonymity.</p>
+      <p>However, the technical capacity exists, but not at scale. <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">Cristina Cattaneo and the LABANOF forensic laboratory at the University of Milan</a> have served as medico-legal coordinators for Italy's Commissioner for Missing Persons. Their pilot studies — including the October 2013 Lampedusa shipwreck, in which 39 of 366 recovered bodies were positively identified — show that decomposed remains can be matched to ante-mortem data from relatives when both ends of the chain are properly resourced. What is missing, Cattaneo and her co-authors argue, is a legal framework that makes post-mortem data collection mandatory rather than discretionary, an Italian database that pools anthropological, genetic, and medico-legal records across jurisdictions, and an international data-sharing infrastructure modeled on Interpol procedures.</p>
+      <p>On 24 February 2026, four organizations — Mem.Med (Memoria Mediterranea), ASGI, Mediterranea Saving Humans and Alarm Phone — <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">appealed to Italian authorities</a> to apply exactly that framework to the Cyclone Harry recoveries: to collect DNA and fingerprints from the remains, complete the standard post-mortem identification forms, register each body in the Registro Nazionale dei Cadaveri Non Identificati, and establish a procedure that would let families abroad submit comparative DNA. The problem, as the attorney for Mem.Med Serena Romano <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">explained</a>, is that there is "zero political will" to identify the dead, and accused authorities of acting to "make deaths invisible." The Italian government has not responded. The same demand was <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">repeated in July 2025</a> by ASGI, EMERGENCY, Sea-Watch and Mem.Med about two migrants recovered in Libyan SAR waters, where they noted that immediate burial often prevents identification. Without these procedures, people disappear twice: first in the sea, and then again in the administrative silence that follows.</p>
     </div>
   </section>
 
@@ -823,14 +793,24 @@
       <p><strong>Replication.</strong> All code, data, and replication instructions are at <a href="https://github.com/data-journalism-26/final-project-giorgio_final">github.com/data-journalism-26/final-project-giorgio_final</a>.</p>
 
       <p><strong>References.</strong><br>
-      Copernicus Climate Change Service. (2026). <em>ERA5 hourly data on single levels, 1940–present.</em> <a href="https://cds.climate.copernicus.eu">cds.climate.copernicus.eu</a><br>
-      EUMETSAT. (2026). <em>Meteosat MSG SEVIRI Level 1.5 data.</em> <a href="https://www.eumetsat.int">eumetsat.int</a><br>
-      IOM Missing Migrants Project. (2026). <em>Missing Migrants Project dataset, May 2026 snapshot.</em> <a href="https://missingmigrants.iom.int">missingmigrants.iom.int</a><br>
-      IOM. (2021, September 14). <em>Deadly "invisible shipwrecks" plague migrants bound for Europe.</em> UN News. <a href="https://news.un.org/en/story/2021/09/1101072">news.un.org/en/story/2021/09/1101072</a><br>
-      Mediterranea. (2026). <em>Potrebbero essere 1000 le persone disperse in mare durante il Ciclone Harry.</em> <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">mediterranearescue.org</a><br>
-      Mixed Migration Centre. (2025). <em>Uncounted &amp; Unknown: Tracking deaths and disappearances on the Atlantic and other irregular migration routes.</em> <a href="https://mixedmigration.org/uncounted-unknown-migrant-deaths-disappearances-atlantic/">mixedmigration.org</a><br>
-      Refugees in Libya. (2026). <em>[Video]</em>. Instagram. <a href="https://www.instagram.com/reels/DUAaqAADDk6/">instagram.com/reels/DUAaqAADDk6</a><br>
-      UNITED for Intercultural Action. (2025). <em>List of Refugee Deaths.</em> <a href="https://unitedagainstrefugeedeaths.eu">unitedagainstrefugeedeaths.eu</a>
+      Amnesty International. (2025, November 6). <em>Tunisia: Rampant violations against refugees and migrants expose EU's complicity risk.</em> <a href="https://www.amnesty.org/en/latest/news/2025/11/tunisia-rampant-violations-against-refugees-migrants-eu-risks-complicity/">amnesty.org</a><br>
+      ASGI. (2025, July 18). <em>Dare un nome alle vittime della migrazione recuperate nel Mediterraneo centrale. La richiesta delle Ong per restituire dignità ai morti e conforto ai loro cari.</em> <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">asgi.it</a><br>
+      Copernicus Climate Change Service. (2026). <em>ERA5 hourly data on single levels, 1940–present.</em> <a href="https://cds.climate.copernicus.eu/">cds.climate.copernicus.eu</a><br>
+      EUMETSAT. (2026). <em>Meteosat MSG SEVIRI Level 1.5 data.</em> <a href="https://www.eumetsat.int/">eumetsat.int</a><br>
+      The Guardian. (2026, February 9). <em>'We've lost everything': anger and despair in Sicilian town collapsing after landslide.</em> <a href="https://www.theguardian.com/world/2026/feb/09/anger-despair-sicilian-town-crumbles-landslide-niscemi">theguardian.com</a><br>
+      Human Rights Watch. (2023, July 19). <em>Tunisia: No Safe Haven for Black African Migrants, Refugees.</em> <a href="https://www.hrw.org/news/2023/07/19/tunisia-no-safe-haven-black-african-migrants-refugees">hrw.org</a><br>
+      Il Post. (2026, February 20). <em>Stanno riemergendo i corpi dei migranti morti in mare durante il ciclone Harry.</em> <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">ilpost.it</a><br>
+      InfoMigrants. (2026, January 26). <em>EU delivers more migration control equipment to Tunisian National Guard.</em> <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">infomigrants.net</a><br>
+      InfoMigrants. (2026, January 7). <em>'Life in Tunisia is getting worse every day': A young Senegalese who lost everything in the destruction of his shelter.</em> <a href="https://www.infomigrants.net/en/post/69058/life-in-tunisia-is-getting-worse-every-day-a-young-senegalese-who-lost-everything-in-the-destruction-of-his-shelter">infomigrants.net</a><br>
+      IOM Missing Migrants Project. <em>Migration within the Mediterranean.</em> <a href="https://missingmigrants.iom.int/region/mediterranean">missingmigrants.iom.int/region/mediterranean</a><br>
+      Lavialibera. (2026, February 24). <em>"Identificate i corpi": l'appello per dare un nome ai migranti uccisi dal ciclone Harry</em> (P. Valenti). <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">lavialibera.it</a><br>
+      Mediterranea. (2026, February 2). <em>Potrebbero essere 1000 le persone disperse in mare durante il Ciclone Harry.</em> <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">mediterranearescue.org</a><br>
+      Mixed Migration Centre. (2025, March 31). <em>Uncounted &amp; Unknown: Tracking deaths &amp; disappearances on the Atlantic &amp; other irregular migration routes.</em> <a href="https://mixedmigration.org/articles/uncounted-unknown-migrant-deaths-disappearances-atlantic/">mixedmigration.org</a><br>
+      Refugees in Libya. (2026). <em>[Opening video, Instagram reel].</em> <a href="https://www.instagram.com/reels/DUAaqAADDk6/">instagram.com/reels/DUAaqAADDk6</a><br>
+      Refugees in Libya. (2026, January 30). <em>Over 1,000 People Missing in the Mediterranean Following Cyclone Harry? What We Know — and What Remains Unaccounted For.</em> <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">refugeesinlibya.org</a><br>
+      Rodríguez Sánchez, A., et al. (2023). <em>Search-and-rescue in the Central Mediterranean Route does not induce migration: Predictive modeling to answer causal queries in migration research.</em> Scientific Reports. <a href="https://www.nature.com/articles/s41598-023-38119-4">nature.com</a><br>
+      Scientific American. (2017, August 9). <em>Giving Dead Migrants a Name.</em> <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">scientificamerican.com</a><br>
+      UNITED for Intercultural Action. <em>Fatal Policies of Fortress Europe — About the United List of Deaths.</em> <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">unitedagainstrefugeedeaths.eu</a>
       </p>
     </div>
   </section>
@@ -840,50 +820,57 @@
        ════════════════════════════════════════════════════ -->
   <script>
   (function () {
-    // ── Video controls ──────────────────────────────────────────────
-    var video       = document.getElementById('cyclone-video');
-    var playPause   = document.getElementById('play-pause');
-    var prevFrame   = document.getElementById('prev-frame');
-    var nextFrame   = document.getElementById('next-frame');
-    var scrub       = document.getElementById('scrub');
-    var timeDisplay = document.getElementById('time-display');
+    // ── Scroll-driven cyclone video ─────────────────────────────────
+    // Each .step has data-time = the end-of-segment timestamp in the
+    // video. As the user scrolls, the currently active step is the
+    // last step whose top has crossed the viewport's middle line.
+    // When the active step changes, we play the video forward to that
+    // step's target time (then pause), or seek back to it on scroll-up.
+    var video = document.getElementById('cyclone-video');
+    var steps = Array.from(document.querySelectorAll('.step'));
+    var stepTimes = steps.map(function (s) {
+      return parseFloat(s.dataset.time || '0');
+    });
 
-    var FPS = 12;
-    var FRAME = 1 / FPS;
+    var pauseAt = null;   // when video.currentTime crosses this, pause
+    var currentIdx = -1;  // currently-active step index
 
-    function fmt(s) { return isFinite(s) ? Math.round(s) + 's' : '—'; }
-    function updateDisplay() {
-      timeDisplay.textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+    video.addEventListener('timeupdate', function () {
+      if (pauseAt !== null && video.currentTime >= pauseAt) {
+        video.pause();
+        video.currentTime = pauseAt;
+        pauseAt = null;
+      }
+    });
+
+    function applyActive(idx) {
+      var target = stepTimes[idx];
+      if (!isFinite(target)) return;
+      if (!video.duration) {
+        video.addEventListener('loadedmetadata', function once() {
+          video.removeEventListener('loadedmetadata', once);
+          applyActive(idx);
+        });
+        return;
+      }
+      var diff = video.currentTime - target;
+      if (diff < -0.1) {
+        // Need to play forward to target
+        pauseAt = target;
+        if (video.paused) video.play().catch(function () {});
+      } else if (diff > 0.1) {
+        // Need to rewind to target and pause
+        pauseAt = null;
+        video.pause();
+        video.currentTime = target;
+      } else {
+        // Already at target
+        pauseAt = null;
+        video.pause();
+      }
     }
 
-    video.addEventListener('loadedmetadata', function () {
-      scrub.max = video.duration;
-      updateDisplay();
-    });
-    video.addEventListener('timeupdate', function () {
-      scrub.value = video.currentTime;
-      updateDisplay();
-    });
-    video.addEventListener('play',  function () { playPause.textContent = '⏸'; });
-    video.addEventListener('pause', function () { playPause.textContent = '▶'; });
-    video.addEventListener('ended', function () { playPause.textContent = '▶'; });
-
-    playPause.addEventListener('click', function () {
-      if (video.paused) { video.play(); } else { video.pause(); }
-    });
-    prevFrame.addEventListener('click', function () {
-      video.pause();
-      video.currentTime = Math.max(0, video.currentTime - FRAME);
-    });
-    nextFrame.addEventListener('click', function () {
-      video.pause();
-      video.currentTime = Math.min(video.duration || 0, video.currentTime + FRAME);
-    });
-    scrub.addEventListener('input', function () {
-      video.currentTime = parseFloat(scrub.value);
-    });
-
-    // ── Source toggle (wind / infrared) ─────────────────────────────
+    // ── Source toggle (infrared / wind & pressure) ──────────────────
     var sourceEl      = document.getElementById('cyclone-video-source');
     var captionSource = document.getElementById('caption-source');
     var sourceButtons = document.querySelectorAll('.source-btn');
@@ -895,69 +882,54 @@
     sourceButtons.forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (btn.classList.contains('active')) return;
-        var savedTime  = video.currentTime;
-        var wasPlaying = !video.paused;
+        var savedTime = video.currentTime;
         sourceButtons.forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
         captionSource.textContent = CAPTION_TEXT[btn.dataset.source];
         sourceEl.src = btn.dataset.src;
+        pauseAt = null;
         video.load();
         video.addEventListener('loadedmetadata', function onLoaded() {
           video.removeEventListener('loadedmetadata', onLoaded);
           video.currentTime = Math.min(savedTime, video.duration);
-          if (wasPlaying) video.play();
+          video.pause();
         });
       });
     });
 
-    // ── Scroll-driven step activation ───────────────────────────────
-    // Each .step has data-time (seconds in the video). When a step enters
-    // the center of the viewport, seek to that timestamp and play (muted).
-    var steps = document.querySelectorAll('.step');
-
-    // Track whether user has manually interacted with controls
-    var userInteracted = false;
-    ['click', 'input'].forEach(function (evt) {
-      [playPause, prevFrame, nextFrame, scrub].forEach(function (el) {
-        el.addEventListener(evt, function () { userInteracted = true; });
-      });
-    });
-
-    if ('IntersectionObserver' in window) {
-      var stepObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          // Mark active
-          steps.forEach(function (s) { s.classList.remove('active'); });
-          entry.target.classList.add('active');
-
-          // Seek video if user hasn't taken manual control
-          if (!userInteracted) {
-            var t = parseFloat(entry.target.dataset.time || '0');
-            var seekThreshold = parseFloat(entry.target.dataset.seekThreshold);
-            // If a seek-threshold is set, only seek when the video hasn't
-            // reached that point yet (e.g. let the last step play naturally
-            // if the video is already in February territory).
-            var shouldSeek = !isFinite(seekThreshold) || video.currentTime < seekThreshold;
-            if (shouldSeek && isFinite(t) && video.duration) {
-              video.currentTime = Math.min(t, video.duration);
-            }
-            // Autoplay muted
-            if (video.paused) {
-              video.play().catch(function () {});
-            }
-          }
-        });
-      }, {
-        rootMargin: '-35% 0px -35% 0px',  // trigger when step is in middle 30% of viewport
-        threshold: 0
-      });
-
-      steps.forEach(function (s) { stepObserver.observe(s); });
-    } else {
-      // Fallback: just show all steps at full opacity
-      steps.forEach(function (s) { s.style.opacity = '1'; });
+    // ── Scroll-position driven step activation ──────────────────────
+    function computeActiveIdx() {
+      // The active step is the LAST step whose top has crossed the
+      // viewport's middle line. This eliminates double-activation and
+      // gives a single, monotonic mapping from scroll → active step.
+      var trigger = window.innerHeight * 0.5;
+      var idx = -1;
+      for (var i = 0; i < steps.length; i++) {
+        if (steps[i].getBoundingClientRect().top <= trigger) idx = i;
+      }
+      return idx;
     }
+
+    function onScroll() {
+      var idx = computeActiveIdx();
+      if (idx < 0 || idx === currentIdx) return;
+      currentIdx = idx;
+      steps.forEach(function (s, i) { s.classList.toggle('active', i === idx); });
+      applyActive(idx);
+    }
+
+    var rafPending = false;
+    window.addEventListener('scroll', function () {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(function () {
+        rafPending = false;
+        onScroll();
+      });
+    }, { passive: true });
+
+    // Initial check (e.g. if page is reloaded mid-scroll)
+    onScroll();
   })();
 
 
