@@ -26,4 +26,4 @@ R ≥ 4.3 with `terra`, `ncdf4`, `sf`, `rnaturalearth`, `maptiles`, `tidyterra`,
 
 ## AI disclosure
 
-Claude Code (Anthropic) supported the HTML page design, the Copernicus / EUMETSAT download pipelines, the interactive Leaflet map, the scrollytelling, the reproducibility scripts, and the storm-animation rendering. Editorial decisions, data wrangling, analysis, interpretation, and the writing are the author's.
+Claude Code (Anthropic) was used as a coding assistant for the HTML page layout, Copernicus/EUMETSAT download pipelines, scrollytelling components, storm-animation rendering, and smaller debugging or implementation tasks. Editorial decisions, data wrangling, analysis, interpretation, and the writing are the author's.
