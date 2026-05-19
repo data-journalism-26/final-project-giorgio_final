@@ -21,7 +21,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--bg-dark); }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--bg-dark); scroll-snap-type: y proximity; }
     body {
       background: var(--bg-dark);
       color: var(--text);
@@ -270,6 +270,8 @@
       margin-bottom: 0;
       opacity: 0.25;
       transition: opacity 0.45s ease, border-color 0.45s ease;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
     }
     .step.active {
       opacity: 1;
@@ -411,6 +413,9 @@
     }
     .map-section .map-header > p {
       margin-top: 6px;
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
     }
 
     /* Leaflet tooltip */
@@ -493,6 +498,32 @@
     }
     .sources-section strong { color: var(--text); }
     .sources-section a { color: var(--muted); border-bottom-color: #cfcfcf; }
+    .references-heading {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 12px 0 14px;
+    }
+    .references-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 18px;
+    }
+    .references-list li {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding-left: 24px;
+      text-indent: -24px;
+      margin-bottom: 10px;
+      text-align: left;
+      hyphens: none;
+    }
+    .references-list li:last-child { margin-bottom: 0; }
 
     /* ── Section divider (dark→light) ─────────────────────────── */
     .band {
@@ -645,8 +676,6 @@
       <p>This is what externalization looks like in practice. On these very same days of the tragedy, the 21st of January 2026, the <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">EU delivered over 21 million euros' worth of new land and sea border-control equipment to Tunisian authorities</a>. The transfer was the most recent step in a policy framework formalized by the 2016 agreement with Turkey, the 2017 MoU with Libya, the 2023 MoU with Tunisia, and cooperation agreements with Morocco and Algeria.</p>
     </div>
   </section>
-  
-  <div class="section-label">The Cyclone Harry over the Central Mediterranean route</div>
 
   <!-- ════════════════════════════════════════════════════
        SCROLL SCENE — sticky video + narrative steps
@@ -683,7 +712,7 @@
         <p class="note">Scroll on to advance the animation. Toggle between meteorological and satellite views above.</p>
       </div>
 
-      <div class="step" id="step-1" data-time="6.7">
+      <div class="step" id="step-1" data-time="6.58">
         <div class="step-number">21 January 2026 — Storm peak</div>
         <h3>The cyclone reaches its peak</h3>
         <p>On 21 January, Cyclone Harry intensified over the Strait of Sicily. Sustained winds exceeded 80 km/h and wave heights rose sharply across the crossing zone. Multiple boats in the water at the time capsized or were swamped.</p>
@@ -691,14 +720,14 @@
         <p>The satellite view above shows the cyclone from space: the coldest cloud tops (white and magenta) mark the deepest convection at the storm's centre. Toggle to the wind &amp; pressure view to see the same period through ERA5 meteorological data.</p>
       </div>
 
-      <div class="step" id="step-2" data-time="13.3">
+      <div class="step" id="step-2" data-time="13.16">
         <div class="step-number">February 2026 — Bodies wash ashore</div>
         <h3>Bodies wash ashore</h3>
         <p>In the weeks after the storm, <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">14 bodies were recovered along the coasts of Sicily and Calabria</a>. In Calabria, the dead reached the beaches of Scalea, Amantea, and Tropea. In Sicily, five were found in the sea around Pantelleria, with others at San Vito Lo Capo, Marsala — one body still wearing a life jacket — Trapani, Petrosino and Custonaci.</p>
         <p>The visualization zooms into the Calabrian coast as circles accumulate on shore. Each body recovered represented a family waiting for news. Activists and forensic teams worked to identify the deceased, many of whom had no documentation. Most will remain unnamed.</p>
       </div>
 
-      <div class="step" id="step-3" data-time="24" data-seek-threshold="13.3">
+      <div class="step" id="step-3" data-time="24">
         <div class="step-number">17 February 2026</div>
         <h3>Over a thousand dead or missing</h3>
         <p>By mid-February, <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">UNITED for Intercultural Action</a> had recorded 20 incidents directly linked to Cyclone Harry, accounting for 1,109 deaths. The IOM's Missing Migrants Project registered 25 events in the same window, totalling 499 dead or missing.</p>
@@ -788,30 +817,32 @@
 
         <h3>6. The interactive map</h3>
         <p>Each circle on the map represents one recorded event in the relevant dataset. The size of the circle scales with the number of dead or missing reported for that event, so large circles indicate incidents with many casualties and small circles indicate one or a few. The map uses a proportional symbol approach: circles are not sized to match each other exactly, but to give a visual sense of the relative scale of each event. The Search and Rescue zone boundaries shown in grey indicate which country's coast guard has nominal responsibility for rescue operations in each area; they are provided as geographic context, not as a judgment about responsibility.</p>
+
+        <h3>7. Replication</h3>
+        <p>All code, data, and replication instructions are at <a href="https://github.com/data-journalism-26/final-project-giorgio_final">github.com/data-journalism-26/final-project-giorgio_final</a>.</p>
       </details>
 
-      <p><strong>Replication.</strong> All code, data, and replication instructions are at <a href="https://github.com/data-journalism-26/final-project-giorgio_final">github.com/data-journalism-26/final-project-giorgio_final</a>.</p>
-
-      <p><strong>References.</strong><br>
-      Amnesty International. (2025, November 6). <em>Tunisia: Rampant violations against refugees and migrants expose EU's complicity risk.</em> <a href="https://www.amnesty.org/en/latest/news/2025/11/tunisia-rampant-violations-against-refugees-migrants-eu-risks-complicity/">amnesty.org</a><br>
-      ASGI. (2025, July 18). <em>Dare un nome alle vittime della migrazione recuperate nel Mediterraneo centrale. La richiesta delle Ong per restituire dignità ai morti e conforto ai loro cari.</em> <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">asgi.it</a><br>
-      Copernicus Climate Change Service. (2026). <em>ERA5 hourly data on single levels, 1940–present.</em> <a href="https://cds.climate.copernicus.eu/">cds.climate.copernicus.eu</a><br>
-      EUMETSAT. (2026). <em>Meteosat MSG SEVIRI Level 1.5 data.</em> <a href="https://www.eumetsat.int/">eumetsat.int</a><br>
-      The Guardian. (2026, February 9). <em>'We've lost everything': anger and despair in Sicilian town collapsing after landslide.</em> <a href="https://www.theguardian.com/world/2026/feb/09/anger-despair-sicilian-town-crumbles-landslide-niscemi">theguardian.com</a><br>
-      Human Rights Watch. (2023, July 19). <em>Tunisia: No Safe Haven for Black African Migrants, Refugees.</em> <a href="https://www.hrw.org/news/2023/07/19/tunisia-no-safe-haven-black-african-migrants-refugees">hrw.org</a><br>
-      Il Post. (2026, February 20). <em>Stanno riemergendo i corpi dei migranti morti in mare durante il ciclone Harry.</em> <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">ilpost.it</a><br>
-      InfoMigrants. (2026, January 26). <em>EU delivers more migration control equipment to Tunisian National Guard.</em> <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">infomigrants.net</a><br>
-      InfoMigrants. (2026, January 7). <em>'Life in Tunisia is getting worse every day': A young Senegalese who lost everything in the destruction of his shelter.</em> <a href="https://www.infomigrants.net/en/post/69058/life-in-tunisia-is-getting-worse-every-day-a-young-senegalese-who-lost-everything-in-the-destruction-of-his-shelter">infomigrants.net</a><br>
-      IOM Missing Migrants Project. <em>Migration within the Mediterranean.</em> <a href="https://missingmigrants.iom.int/region/mediterranean">missingmigrants.iom.int/region/mediterranean</a><br>
-      Lavialibera. (2026, February 24). <em>"Identificate i corpi": l'appello per dare un nome ai migranti uccisi dal ciclone Harry</em> (P. Valenti). <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">lavialibera.it</a><br>
-      Mediterranea. (2026, February 2). <em>Potrebbero essere 1000 le persone disperse in mare durante il Ciclone Harry.</em> <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">mediterranearescue.org</a><br>
-      Mixed Migration Centre. (2025, March 31). <em>Uncounted &amp; Unknown: Tracking deaths &amp; disappearances on the Atlantic &amp; other irregular migration routes.</em> <a href="https://mixedmigration.org/articles/uncounted-unknown-migrant-deaths-disappearances-atlantic/">mixedmigration.org</a><br>
-      Refugees in Libya. (2026). <em>[Opening video, Instagram reel].</em> <a href="https://www.instagram.com/reels/DUAaqAADDk6/">instagram.com/reels/DUAaqAADDk6</a><br>
-      Refugees in Libya. (2026, January 30). <em>Over 1,000 People Missing in the Mediterranean Following Cyclone Harry? What We Know — and What Remains Unaccounted For.</em> <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">refugeesinlibya.org</a><br>
-      Rodríguez Sánchez, A., et al. (2023). <em>Search-and-rescue in the Central Mediterranean Route does not induce migration: Predictive modeling to answer causal queries in migration research.</em> Scientific Reports. <a href="https://www.nature.com/articles/s41598-023-38119-4">nature.com</a><br>
-      Scientific American. (2017, August 9). <em>Giving Dead Migrants a Name.</em> <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">scientificamerican.com</a><br>
-      UNITED for Intercultural Action. <em>Fatal Policies of Fortress Europe — About the United List of Deaths.</em> <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">unitedagainstrefugeedeaths.eu</a>
-      </p>
+      <div class="references-heading">References</div>
+      <ul class="references-list">
+        <li>Amnesty International. (2025, November 6). <em>Tunisia: Rampant violations against refugees and migrants expose EU's complicity risk.</em> <a href="https://www.amnesty.org/en/latest/news/2025/11/tunisia-rampant-violations-against-refugees-migrants-eu-risks-complicity/">amnesty.org</a></li>
+        <li>ASGI. (2025, July 18). <em>Dare un nome alle vittime della migrazione recuperate nel Mediterraneo centrale. La richiesta delle Ong per restituire dignità ai morti e conforto ai loro cari.</em> <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">asgi.it</a></li>
+        <li>Copernicus Climate Change Service. (2026). <em>ERA5 hourly data on single levels, 1940–present.</em> <a href="https://cds.climate.copernicus.eu/">cds.climate.copernicus.eu</a></li>
+        <li>EUMETSAT. (2026). <em>Meteosat MSG SEVIRI Level 1.5 data.</em> <a href="https://www.eumetsat.int/">eumetsat.int</a></li>
+        <li>The Guardian. (2026, February 9). <em>'We've lost everything': anger and despair in Sicilian town collapsing after landslide.</em> <a href="https://www.theguardian.com/world/2026/feb/09/anger-despair-sicilian-town-crumbles-landslide-niscemi">theguardian.com</a></li>
+        <li>Human Rights Watch. (2023, July 19). <em>Tunisia: No Safe Haven for Black African Migrants, Refugees.</em> <a href="https://www.hrw.org/news/2023/07/19/tunisia-no-safe-haven-black-african-migrants-refugees">hrw.org</a></li>
+        <li>Il Post. (2026, February 20). <em>Stanno riemergendo i corpi dei migranti morti in mare durante il ciclone Harry.</em> <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">ilpost.it</a></li>
+        <li>InfoMigrants. (2026, January 26). <em>EU delivers more migration control equipment to Tunisian National Guard.</em> <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">infomigrants.net</a></li>
+        <li>InfoMigrants. (2026, January 7). <em>'Life in Tunisia is getting worse every day': A young Senegalese who lost everything in the destruction of his shelter.</em> <a href="https://www.infomigrants.net/en/post/69058/life-in-tunisia-is-getting-worse-every-day-a-young-senegalese-who-lost-everything-in-the-destruction-of-his-shelter">infomigrants.net</a></li>
+        <li>IOM Missing Migrants Project. <em>Migration within the Mediterranean.</em> <a href="https://missingmigrants.iom.int/region/mediterranean">missingmigrants.iom.int/region/mediterranean</a></li>
+        <li>Lavialibera. (2026, February 24). <em>"Identificate i corpi": l'appello per dare un nome ai migranti uccisi dal ciclone Harry</em> (P. Valenti). <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">lavialibera.it</a></li>
+        <li>Mediterranea. (2026, February 2). <em>Potrebbero essere 1000 le persone disperse in mare durante il Ciclone Harry.</em> <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">mediterranearescue.org</a></li>
+        <li>Mixed Migration Centre. (2025, March 31). <em>Uncounted &amp; Unknown: Tracking deaths &amp; disappearances on the Atlantic &amp; other irregular migration routes.</em> <a href="https://mixedmigration.org/articles/uncounted-unknown-migrant-deaths-disappearances-atlantic/">mixedmigration.org</a></li>
+        <li>Refugees in Libya. (2026). <em>[Opening video, Instagram reel].</em> <a href="https://www.instagram.com/reels/DUAaqAADDk6/">instagram.com/reels/DUAaqAADDk6</a></li>
+        <li>Refugees in Libya. (2026, January 30). <em>Over 1,000 People Missing in the Mediterranean Following Cyclone Harry? What We Know — and What Remains Unaccounted For.</em> <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">refugeesinlibya.org</a></li>
+        <li>Rodríguez Sánchez, A., et al. (2023). <em>Search-and-rescue in the Central Mediterranean Route does not induce migration: Predictive modeling to answer causal queries in migration research.</em> Scientific Reports. <a href="https://www.nature.com/articles/s41598-023-38119-4">nature.com</a></li>
+        <li>Scientific American. (2017, August 9). <em>Giving Dead Migrants a Name.</em> <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">scientificamerican.com</a></li>
+        <li>UNITED for Intercultural Action. <em>Fatal Policies of Fortress Europe — About the United List of Deaths.</em> <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">unitedagainstrefugeedeaths.eu</a></li>
+      </ul>
     </div>
   </section>
 
@@ -820,21 +851,22 @@
        ════════════════════════════════════════════════════ -->
   <script>
   (function () {
-    // ── Scroll-driven cyclone video ─────────────────────────────────
-    // Each .step has data-time = the end-of-segment timestamp in the
-    // video. As the user scrolls, the currently active step is the
-    // last step whose top has crossed the viewport's middle line.
-    // When the active step changes, we play the video forward to that
-    // step's target time (then pause), or seek back to it on scroll-up.
-    var video = document.getElementById('cyclone-video');
-    var steps = Array.from(document.querySelectorAll('.step'));
+    // ── Scrolly cyclone video ───────────────────────────────────────
+    // CSS scroll-snap lands the user on each step. When a step
+    // becomes active:
+    //   • If we haven't yet reached this step's data-time, play the
+    //     video forward and pause at the target.
+    //   • If we've already passed it (user scrolled up), snap the
+    //     video back to the target's frame.
+    var video     = document.getElementById('cyclone-video');
+    var steps     = Array.from(document.querySelectorAll('.step'));
     var stepTimes = steps.map(function (s) {
       return parseFloat(s.dataset.time || '0');
     });
+    var currentIdx = -1;
+    var pauseAt    = null;
 
-    var pauseAt = null;   // when video.currentTime crosses this, pause
-    var currentIdx = -1;  // currently-active step index
-
+    // Pause at the target time precisely.
     video.addEventListener('timeupdate', function () {
       if (pauseAt !== null && video.currentTime >= pauseAt) {
         video.pause();
@@ -843,32 +875,51 @@
       }
     });
 
-    function applyActive(idx) {
+    function activeIdx() {
+      var trigger = window.innerHeight * 0.5;
+      var idx = 0;
+      for (var i = 0; i < steps.length; i++) {
+        if (steps[i].getBoundingClientRect().top <= trigger) idx = i;
+      }
+      return idx;
+    }
+
+    function applyStep(idx) {
+      if (!video.duration) return;          // wait for metadata
       var target = stepTimes[idx];
       if (!isFinite(target)) return;
-      if (!video.duration) {
-        video.addEventListener('loadedmetadata', function once() {
-          video.removeEventListener('loadedmetadata', once);
-          applyActive(idx);
-        });
-        return;
-      }
-      var diff = video.currentTime - target;
-      if (diff < -0.1) {
-        // Need to play forward to target
+      target = Math.min(target, video.duration);
+
+      if (video.currentTime < target - 0.05) {
+        // Forward — play through to target
         pauseAt = target;
         if (video.paused) video.play().catch(function () {});
-      } else if (diff > 0.1) {
-        // Need to rewind to target and pause
+      } else {
+        // We're at or past the target — snap back and pause there.
         pauseAt = null;
         video.pause();
         video.currentTime = target;
-      } else {
-        // Already at target
-        pauseAt = null;
-        video.pause();
       }
     }
+
+    function update() {
+      var idx = activeIdx();
+      if (idx === currentIdx) return;
+      currentIdx = idx;
+      steps.forEach(function (s, i) { s.classList.toggle('active', i === idx); });
+      applyStep(idx);
+    }
+
+    var rafPending = false;
+    window.addEventListener('scroll', function () {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(function () { rafPending = false; update(); });
+    }, { passive: true });
+    window.addEventListener('resize', update);
+    video.addEventListener('loadedmetadata', function () {
+      if (currentIdx >= 0) applyStep(currentIdx); else update();
+    });
 
     // ── Source toggle (infrared / wind & pressure) ──────────────────
     var sourceEl      = document.getElementById('cyclone-video-source');
@@ -882,7 +933,6 @@
     sourceButtons.forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (btn.classList.contains('active')) return;
-        var savedTime = video.currentTime;
         sourceButtons.forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
         captionSource.textContent = CAPTION_TEXT[btn.dataset.source];
@@ -891,45 +941,13 @@
         video.load();
         video.addEventListener('loadedmetadata', function onLoaded() {
           video.removeEventListener('loadedmetadata', onLoaded);
-          video.currentTime = Math.min(savedTime, video.duration);
-          video.pause();
+          // Re-apply current step so the new video lands on the right frame.
+          if (currentIdx >= 0) applyStep(currentIdx);
         });
       });
     });
 
-    // ── Scroll-position driven step activation ──────────────────────
-    function computeActiveIdx() {
-      // The active step is the LAST step whose top has crossed the
-      // viewport's middle line. This eliminates double-activation and
-      // gives a single, monotonic mapping from scroll → active step.
-      var trigger = window.innerHeight * 0.5;
-      var idx = -1;
-      for (var i = 0; i < steps.length; i++) {
-        if (steps[i].getBoundingClientRect().top <= trigger) idx = i;
-      }
-      return idx;
-    }
-
-    function onScroll() {
-      var idx = computeActiveIdx();
-      if (idx < 0 || idx === currentIdx) return;
-      currentIdx = idx;
-      steps.forEach(function (s, i) { s.classList.toggle('active', i === idx); });
-      applyActive(idx);
-    }
-
-    var rafPending = false;
-    window.addEventListener('scroll', function () {
-      if (rafPending) return;
-      rafPending = true;
-      requestAnimationFrame(function () {
-        rafPending = false;
-        onScroll();
-      });
-    }, { passive: true });
-
-    // Initial check (e.g. if page is reloaded mid-scroll)
-    onScroll();
+    update();
   })();
 
 

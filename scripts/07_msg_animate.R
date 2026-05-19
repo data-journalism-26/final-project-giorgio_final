@@ -304,4 +304,17 @@ frame_files <- sort(list.files(FRAMES, pattern = "frame_.*\\.png$", full.names =
 out_video   <- file.path(VIDEO_DIR, sprintf("cyclone_harry_ir_%s.mp4", mode_arg))
 av::av_encode_video(frame_files, output = out_video, framerate = framerate,
                     vfilter = "scale=trunc(iw/2)*2:trunc(ih/2)*2")
+
+# Move the MP4 metadata (moov atom) to the front of the file so browsers
+# can start playback immediately instead of having to buffer the whole
+# file first. Without this, large MP4s stall mid-playback on the web.
+qtfaststart <- Sys.which("qtfaststart")
+if (nzchar(qtfaststart)) {
+  tmp <- paste0(out_video, ".faststart.mp4")
+  status <- system2(qtfaststart, c(shQuote(out_video), shQuote(tmp)))
+  if (status == 0 && file.exists(tmp)) file.rename(tmp, out_video)
+} else {
+  warning("qtfaststart not found; the MP4 may stall in browsers. ",
+          "Install with: pip3 install qtfaststart")
+}
 cat("Saved:", out_video, "\n")
