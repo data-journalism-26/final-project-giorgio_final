@@ -31,9 +31,6 @@
     }
 
     /* ── Utilities ─────────────────────────────────────────────── */
-    .sans {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
     a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--line); }
     a:hover { border-bottom-color: var(--accent); }
 
@@ -338,22 +335,6 @@
       margin-top: 36px;
       margin-bottom: 14px;
     }
-    .map-section h2 {
-      font-size: 26px;
-      font-weight: 700;
-      line-height: 1.2;
-      letter-spacing: -0.01em;
-      margin-bottom: 10px;
-      max-width: 580px;
-    }
-    .map-section .map-lede {
-      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
-      font-size: 22px;
-      font-weight: 400;
-      line-height: 1.35;
-      color: var(--text);
-      margin-bottom: 36px;
-    }
     .map-figure {
       max-width: calc(var(--wide-width) - 64px);
       margin: 0 auto;
@@ -437,7 +418,7 @@
     .leaflet-tooltip.incident-tip .deaths { color: var(--accent); font-weight: 700; }
 
     /* Map annotations */
-    .map-city, .map-sea, .map-sar {
+    .map-city, .map-sar {
       background: none !important;
       border: 0 !important;
       pointer-events: none;
@@ -460,14 +441,6 @@
     .map-city.dir-left  .city-name { right: 8px; top: -7px; }
     .map-city.dir-above .city-name { left: 0; bottom: 8px; transform: translateX(-50%); }
     .map-city.dir-below .city-name { left: 0; top:    8px; transform: translateX(-50%); }
-    .map-sea .sea-name {
-      position: absolute;
-      font-family: Georgia, serif; font-style: italic;
-      color: #404040; font-size: 13px; white-space: nowrap;
-      left: 0; top: 0; transform: translate(-50%, -50%);
-      text-shadow: -1px -1px 0 #fafafa, 1px -1px 0 #fafafa,
-                   -1px  1px 0 #fafafa, 1px  1px 0 #fafafa, 0 0 4px #fafafa;
-    }
     .map-sar .sar-name {
       position: absolute;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -644,16 +617,16 @@
        HERO
        ════════════════════════════════════════════════════ -->
   <section class="hero">
-    <video class="hero-bg" autoplay muted loop playsinline>
-      <source src="data/visual/video_article.mp4" type="video/mp4">
+    <video class="hero-bg" autoplay muted loop playsinline preload="auto">
+      <source src="data/visual/hero.mp4" type="video/mp4">
     </video>
     <div class="hero-gradient"></div>
     <div class="hero-content">
-      <div class="hero-kicker">Final Project · E1493 Data Journalism 2026</div>
+      <div class="hero-kicker">Final Project · E1493 Data Journalism 2026 · Hertie School</div>
       <h1>The Cyclone Harry on the Central Mediterranean migration route</h1>
-      <p class="deck">In late January 2026, the Mediterranean cyclone crossed the Strait of Sicily as an unspecified number of people attempted to cross the sea from Tunisia. More than a thousand were reported dead or missing.</p>
+      <p class="deck">In late January 2026, the Mediterranean cyclone moved across the Strait of Sicily as an unspecified number of people attempted to cross the sea from Tunisia. More than a thousand were reported dead or missing.</p>
       <p class="hero-byline"><strong>Giorgio Coppola</strong> &nbsp;·&nbsp; 19 May 2026</p>
-      <p class="hero-credit">Opening video: Refugees in Libya, <a href="https://www.instagram.com/reels/DUAaqAADDk6/">Instagram reel</a> (2026)</p>
+      <p class="hero-credit">Footage: <a href="https://www.youtube.com/watch?v=triom_MRq3A">TG2000, Migranti, Mediterranea: 'Mille morti in mare per ciclone Harry'</a> (2 February 2026), via YouTube.</p>
     </div>
     <div class="hero-scroll-hint">Scroll</div>
   </section>
@@ -664,16 +637,16 @@
   <section class="text-section">
     <div class="prose">
       <p class="lede">At the end of January 2026, Cyclone Harry crossed Southern Italy and the North African coast. In the Sicilian town of <a href="https://www.theguardian.com/world/2026/feb/09/anger-despair-sicilian-town-crumbles-landslide-niscemi">Niscemi, a landslide</a> destroyed buildings and forced more than 1,600 people to evacuate, but killed no one. A few miles away, at sea, the same days unfolded differently: more than a thousand people were reported dead or missing in the Central Mediterranean, right after the passage of the storm. Over the following weeks, a handful of anonymous bodies washed ashore on the beaches of Sicily and Calabria.</p>
-      <p>The only known survivor from one of these boats was Ramadan Konte, from Sierra Leone. According to his testimony, <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">reported by Mediterranea</a>, he left Sfax on a boat carrying around 50 people. During the storm, the boat capsized. Konte survived for more than 24 hours in the open sea before being rescued by the merchant ship <em>Star</em>, captained by Ahmed Omar Shafik, off the east coast of Tunisia and south of Malta. When he was pulled aboard, bodies were visible in the water around him. From that single boat, he lost his brother, his brother's wife, and his nephew.</p>
+      <p>The only known survivor from one of these boats was Ramadan Konte, from Sierra Leone. According to his testimony, <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">reported by Mediterranea Saving Humans</a>, he left Sfax on a boat carrying around 50 people. During the storm, the boat capsized. Konte survived for more than 24 hours in the open sea before being rescued by the merchant ship <em>Star</em>, captained by Ahmed Omar Shafik, off the east coast of Tunisia and south of Malta. When he was pulled aboard, bodies were visible in the water around him. That day, he lost his brother, his brother's wife, and his nephew.</p>
       <figure>
         <img src="data/visual/rescue-22-jan-2026.png"
              alt="Rescue at sea: people on the deck of a ship pulling a person wearing a lifebuoy up from the water.">
-        <figcaption><strong>The only survivor.</strong> The rescue of Ramadan Konte, 22 January 2026. <em>Source: Refugees in Libya, screenshot from video.</em></figcaption>
+        <figcaption><strong>The only survivor.</strong> The rescue of Ramadan Konte, 22 January 2026. <em>Source: Refugees in Libya, screenshot from <a href="https://www.instagram.com/reels/DUAaqAADDk6/">Instagram reel</a> (2026).</em></figcaption>
       </figure>
-      <p>The Central Mediterranean route is known as the deadliest migratory sea route worldwide. Since 2014, <a href="https://missingmigrants.iom.int/region/mediterranean">IOM's Missing Migrants Project</a> has documented tens of thousands of deaths and disappearances, with the majority occurring on this route. In 2025 alone, over 1,300 people lost their lives there. Cyclone Harry caused <a href="https://www.avvenire.it/attualita/la-denuncia-dellong-oltre-mille-migranti-dispersi-durante-il-ciclone-harry_104016">a similar loss</a>, with waves reaching seven metres and winds over 54 knots in about a week. The primary causes of death are structural: overloaded rubber dinghies, unseaworthy boats, lack of rescue vessels, and most critically, the absence of legal migration options.</p>
-      <p>This matters because rescue capacity influences the possibility of survival. When Italy scaled back its Mare Nostrum operation, substituting it with the smaller EU-led Triton mission, mortality rates on the route increased dramatically (<a href="https://content.forensic-architecture.org/wp-content/uploads/2023/04/2016_Report_Death-By-Rescue.pdf">Heller &amp; Pezzani, 2016</a>) — a risk <a href="https://www.europarl.europa.eu/RegData/etudes/BRIE/2021/659442/EPRS_BRI%282021%29659442_EN.pdf">EU policymakers</a> had been warned about in advance. The legal scholar Violeta Moreno-Lax calls this "interdiction by omission": when destination states delegate (or "externalize") their duty to rescue to third countries or private actors that cannot — or will not — fulfil it, non-rescue itself becomes a deliberate tool of border control (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3623029">Moreno-Lax, 2020</a>; <a href="https://www.cambridge.org/core/journals/international-and-comparative-law-quarterly/article/securitization-of-search-and-rescue-at-sea-the-response-to-boat-migration-in-the-mediterranean-and-offshore-australia/A13E77F859B6A2CB8CE8A44B34FE0DFB">2018</a>).</p>
-      <p>The standard counter-argument — that rescue ships act as a "pull factor" — does not hold up under quantitative scrutiny. A regression analysis of Libya-to-Italy crossings found that the only statistically significant predictors of departures were weather conditions and political stability on the Libyan side; NGO presence had no significant effect (<a href="https://link.springer.com/article/10.1007/s10610-020-09464-1">Cusumano &amp; Villa, 2020</a>). A more recent causal study employing machine learning (<a href="https://www.nature.com/articles/s41598-023-38119-4">Rodríguez Sánchez et al., 2023</a>) reached the same conclusion for the Central Mediterranean route over 2011–2020: state and private rescue operations did not increase migration flows. What drives variation in crossings was conflicts in countries of origin and transit, alongside commodity prices, currency exchange rates, natural disasters, and weather conditions. Rescue, the paper concludes, is a response to the flow of migration — not its cause. When NGO ships are obstructed, delayed, or criminalized, it is not departures that change but survival rates.</p>
-      <p>This is what externalization looks like in practice. On these very same days of the tragedy, the 21st of January 2026, the <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">EU delivered over 21 million euros' worth of new land and sea border-control equipment to Tunisian authorities</a>. The transfer was the most recent step in a policy framework formalized by the 2016 agreement with Turkey, the 2017 MoU with Libya, the 2023 MoU with Tunisia, and cooperation agreements with Morocco and Algeria.</p>
+      <p>The Central Mediterranean route is known as the deadliest migratory sea route worldwide. Since 2014, the <a href="https://missingmigrants.iom.int/region/mediterranean">International Organization for Migration's (IOM) Missing Migrants Project</a> has documented tens of thousands of deaths and disappearances, with the majority occurring on this route. In 2025 alone, over 1,300 people lost their lives there. Cyclone Harry caused <a href="https://www.avvenire.it/attualita/la-denuncia-dellong-oltre-mille-migranti-dispersi-durante-il-ciclone-harry_104016">a similar loss in about a week</a>, with waves reaching seven metres and winds over 54 knots. However, the main causes of death are not high waves, but overloaded unseaworthy boats, lack of rescue vessels, and most critically, the absence of legal migration options. These factor are influenced by specific policy choices, that the European Union has been pursuing since decades.</p>
+      <p>First and foremost, the EU has increasingly criminalized rescue at sea. This matters because rescue capacity influences the possibility of survival. When Italy scaled back its Mare Nostrum operation, substituting it with the smaller EU-led Triton mission, mortality rates on the route increased dramatically (<a href="https://content.forensic-architecture.org/wp-content/uploads/2023/04/2016_Report_Death-By-Rescue.pdf">Heller &amp; Pezzani, 2016</a>) — a risk <a href="https://www.europarl.europa.eu/RegData/etudes/BRIE/2021/659442/EPRS_BRI%282021%29659442_EN.pdf">EU policymakers</a> had been warned about in advance. The legal scholar Violeta Moreno-Lax calls this "interdiction by omission": when destination states delegate (or "externalize") their duty to rescue to third countries or private actors that cannot — or will not — fulfil it, non-rescue itself becomes a deliberate tool of border control (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3623029">Moreno-Lax, 2020</a>; <a href="https://www.cambridge.org/core/journals/international-and-comparative-law-quarterly/article/securitization-of-search-and-rescue-at-sea-the-response-to-boat-migration-in-the-mediterranean-and-offshore-australia/A13E77F859B6A2CB8CE8A44B34FE0DFB">2018</a>).</p>
+      <p>The standard counter-argument — that rescue ships act as a "pull factor" — does not hold up under quantitative scrutiny. A regression analysis of Libya-to-Italy crossings found that the only statistically significant predictors of departures were weather conditions and political stability on the Libyan side; non-governmental organization (NGO) presence had no significant effect (<a href="https://link.springer.com/article/10.1007/s10610-020-09464-1">Cusumano &amp; Villa, 2020</a>). A more recent causal study employing machine learning (<a href="https://www.nature.com/articles/s41598-023-38119-4">Rodríguez Sánchez et al., 2023</a>) reached the same conclusion for the Central Mediterranean route over 2011–2020: state and private rescue operations did not increase migration flows. What drives variation in crossings was conflicts in countries of origin and transit, alongside commodity prices, currency exchange rates, natural disasters, and weather conditions. Rescue, the paper concludes, is a response to the flow of migration — not its cause. When NGO ships are obstructed, delayed, or criminalized, it is not departures that change but survival rates.</p>
+      <p>This is what externalization looks like in practice. On these very same days of the tragedy, the 21st of January 2026, the <a href="https://www.infomigrants.net/en/post/69438/eu-delivers-more-migration-control-equipment-to-tunisian-national-guard">EU delivered over 21 million euros' worth of new land and sea border-control equipment to Tunisian authorities</a>. The transfer was the most recent step in a policy framework formalized by the 2016 agreement with Turkey, the 2017 Memorandum of Understanding (MoU) with Libya, the 2023 MoU with Tunisia, and cooperation agreements with Morocco and Algeria.</p>
     </div>
   </section>
 
@@ -695,8 +668,8 @@
         <button class="source-btn" data-source="wind" data-src="output/video/cyclone_harry_full.mp4">Wind &amp; pressure</button>
       </div>
       <p class="panel-caption">
-        <strong>Each circle</strong> marks a recorded event. Circle size scales with the number of dead or missing per incident.
-        <span id="caption-source">Meteosat SEVIRI 10.8 µm cloud-top brightness temperature. White/magenta = coldest tops, deepest convection; grey = low cloud or sea surface.</span>
+        <strong>Each circle</strong> marks a recorded event; size scales with the dead or missing.
+        <span id="caption-source">Meteosat SEVIRI 10.8 µm cloud-top temperature — white/magenta = deepest convection, grey = low cloud or sea. Toggle for the wind &amp; pressure view.</span>
       </p>
     </div>
 
@@ -708,20 +681,18 @@
         <h3>Departures begin</h3>
         <p>In the days before the shipwrecks, <a href="https://www.infomigrants.net/en/post/69058/life-in-tunisia-is-getting-worse-every-day-a-young-senegalese-who-lost-everything-in-the-destruction-of-his-shelter">testimonies from Sfax</a> describe raids, military pressure, and the destruction of informal settlements in the olive groves around the city. According to these accounts, controls on the beaches were relaxed at the same time, allowing many boats to leave despite the bad weather.</p>
         <p>The situation in Tunisia helps explain why so many people may have left under such dangerous conditions. People do not always choose when to cross, they cross because staying has become impossible. <a href="https://www.hrw.org/news/2023/07/19/tunisia-no-safe-haven-black-african-migrants-refugees">Human Rights Watch</a> documented abuses by Tunisian security forces against Black African migrants, refugees, and asylum seekers, including beatings, arbitrary arrests, forced evictions, and collective expulsions. <a href="https://www.amnesty.org/en/latest/news/2025/11/tunisia-rampant-violations-against-refugees-migrants-eu-risks-complicity/">Amnesty International</a> warned that EU cooperation with Tunisia risks complicity if it prioritizes containment over protection.</p>
-        <p>The animation shows the full 37-day window, from 12 January to 17 February 2026. Black circles accumulate as incidents are recorded.</p>
-        <p class="note">Scroll on to advance the animation. Toggle between meteorological and satellite views above.</p>
+        <p class="note">The animation shows the full 37-day window, from 12 January to 17 February 2026. Black circles accumulate as incidents are recorded. Scroll on to advance the animation.</p>
       </div>
 
-      <div class="step" id="step-1" data-time="6.58">
-        <div class="step-number">21 January 2026 — Storm peak</div>
+      <div class="step" id="step-1" data-time="6.6">
+        <div class="step-number">21 January 2026</div>
         <h3>The cyclone reaches its peak</h3>
         <p>On 21 January, Cyclone Harry intensified over the Strait of Sicily. Sustained winds exceeded 80 km/h and wave heights rose sharply across the crossing zone. Multiple boats in the water at the time capsized or were swamped.</p>
-        <p>According to <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">Mediterranea Saving Humans</a>, an official maritime alert was transmitted through the Inmarsat network by the Italian Coast Guard's Maritime Rescue Coordination Center in Rome. The alert, dated 24 January 2026, referred to eight separate SAR cases: eight boats that had left Sfax between 14 and 21 January, carrying about 380 people in total. As of that date, none of those boats had been found, and no confirmed rescues linked to those eight cases had been reported. However, testimonies collected in Tunisia by <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">Refugees in Libya</a> from families of people who had disappeared after leaving the Sfax area describe the number of missing persons during that day as closer to 1000.</p>
-        <p>The satellite view above shows the cyclone from space: the coldest cloud tops (white and magenta) mark the deepest convection at the storm's centre. Toggle to the wind &amp; pressure view to see the same period through ERA5 meteorological data.</p>
+        <p>According to <a href="https://mediterranearescue.org/it/news/potrebbero-essere-1000-le-persone-disperse-in-mare-durante-il-ciclone-harry">Mediterranea Saving Humans</a>, an official maritime alert was transmitted through the Inmarsat network by the Italian Coast Guard's Maritime Rescue Coordination Center in Rome. The alert, dated 24 January 2026, referred to eight separate search and rescue (SAR) cases: eight boats that had left Sfax between 14 and 21 January, carrying about 380 people in total. As of that date, none of those boats had been found, and no confirmed rescues linked to those eight cases had been reported. However, testimonies collected in Tunisia by <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">Refugees in Libya</a> from families of people who had disappeared after leaving the Sfax area describe the number of missing persons during that day as closer to 1000.</p>
       </div>
 
-      <div class="step" id="step-2" data-time="13.16">
-        <div class="step-number">February 2026 — Bodies wash ashore</div>
+      <div class="step" id="step-2" data-time="13.3">
+        <div class="step-number">February 2026</div>
         <h3>Bodies wash ashore</h3>
         <p>In the weeks after the storm, <a href="https://www.ilpost.it/2026/02/20/migranti-corpi-sicilia-calabria-sud-italia-ciclone-harry/">14 bodies were recovered along the coasts of Sicily and Calabria</a>. In Calabria, the dead reached the beaches of Scalea, Amantea, and Tropea. In Sicily, five were found in the sea around Pantelleria, with others at San Vito Lo Capo, Marsala — one body still wearing a life jacket — Trapani, Petrosino and Custonaci.</p>
         <p>The visualization zooms into the Calabrian coast as circles accumulate on shore. Each body recovered represented a family waiting for news. Activists and forensic teams worked to identify the deceased, many of whom had no documentation. Most will remain unnamed.</p>
@@ -764,7 +735,7 @@
         </div>
       </div>
     </div>
-    <p class="map-figcaption"><strong>Sources differ in scope.</strong> UNITED's <em>List of Refugee Deaths</em> records incidents explicitly linked to Cyclone Harry; IOM's Missing Migrants Project covers all Central Mediterranean events in the same window, including post-storm body recoveries along Italian and Libyan coasts. IMO Search and Rescue zones (Italy, Malta, Tunisia, Libya) are shown as dashed grey context. Hover a circle for incident details.</p>
+    <p class="map-figcaption"><strong>Sources differ in scope.</strong> UNITED's <em>List of Refugee Deaths</em> records incidents explicitly linked to Cyclone Harry; IOM's Missing Migrants Project covers all Central Mediterranean events in the same window, including post-storm body recoveries along Italian and Libyan coasts. International Maritime Organization (IMO) Search and Rescue zones (Italy, Malta, Tunisia, Libya) are shown as dashed grey context. Hover a circle for incident details.</p>
   </section>
 
   <!-- ════════════════════════════════════════════════════
@@ -777,8 +748,8 @@
       <div class="section-label">How to identify the bodies, and why it is important</div>
       
       <p>Identifying the dead is extremely difficult. Bodies recovered after days or weeks at sea may be decomposed beyond visual recognition. There is no international DNA comparison system, and post-mortem procedures on the Italian side are inconsistent. The result is large-scale anonymity.</p>
-      <p>However, the technical capacity exists, but not at scale. <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">Cristina Cattaneo and the LABANOF forensic laboratory at the University of Milan</a> have served as medico-legal coordinators for Italy's Commissioner for Missing Persons. Their pilot studies — including the October 2013 Lampedusa shipwreck, in which 39 of 366 recovered bodies were positively identified — show that decomposed remains can be matched to ante-mortem data from relatives when both ends of the chain are properly resourced. What is missing, Cattaneo and her co-authors argue, is a legal framework that makes post-mortem data collection mandatory rather than discretionary, an Italian database that pools anthropological, genetic, and medico-legal records across jurisdictions, and an international data-sharing infrastructure modeled on Interpol procedures.</p>
-      <p>On 24 February 2026, four organizations — Mem.Med (Memoria Mediterranea), ASGI, Mediterranea Saving Humans and Alarm Phone — <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">appealed to Italian authorities</a> to apply exactly that framework to the Cyclone Harry recoveries: to collect DNA and fingerprints from the remains, complete the standard post-mortem identification forms, register each body in the Registro Nazionale dei Cadaveri Non Identificati, and establish a procedure that would let families abroad submit comparative DNA. The problem, as the attorney for Mem.Med Serena Romano <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">explained</a>, is that there is "zero political will" to identify the dead, and accused authorities of acting to "make deaths invisible." The Italian government has not responded. The same demand was <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">repeated in July 2025</a> by ASGI, EMERGENCY, Sea-Watch and Mem.Med about two migrants recovered in Libyan SAR waters, where they noted that immediate burial often prevents identification. Without these procedures, people disappear twice: first in the sea, and then again in the administrative silence that follows.</p>
+      <p>However, the technical capacity exists, but not at scale. <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">Cristina Cattaneo and the LABANOF (Laboratorio di Antropologia e Odontologia Forense) at the University of Milan</a> have served as medico-legal coordinators for Italy's Commissioner for Missing Persons. Their pilot studies — including the October 2013 Lampedusa shipwreck, in which 39 of 366 recovered bodies were positively identified — show that decomposed remains can be matched to ante-mortem data from relatives when both ends of the chain are properly resourced. What is missing, Cattaneo and her co-authors argue, is a legal framework that makes post-mortem data collection mandatory rather than discretionary, an Italian database that pools anthropological, genetic, and medico-legal records across jurisdictions, and an international data-sharing infrastructure modeled on Interpol procedures.</p>
+      <p>On 24 February 2026, four organizations — Mem.Med (Memoria Mediterranea), ASGI (Associazione per gli Studi Giuridici sull'Immigrazione), Mediterranea Saving Humans and Alarm Phone — <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">appealed to Italian authorities</a> to apply exactly that framework to the Cyclone Harry recoveries: to collect DNA and fingerprints from the remains, complete the standard post-mortem identification forms, register each body in the <em>Registro Nazionale dei Cadaveri Non Identificati</em> (National Register of Unidentified Bodies), and establish a procedure that would let families abroad submit comparative DNA. The problem, as the attorney for Mem.Med Serena Romano <a href="https://lavialibera.it/it-schede-2598-corpi_migranti_ciclone_harry_appello_identificare_dare_nome">explained</a>, is that there is "zero political will" to identify the dead, and accused authorities of acting to "make deaths invisible." The Italian government has not responded. The same demand was <a href="https://www.asgi.it/asilo-e-protezione-internazionale/identificazione-migranti-mediterraneo/">repeated in July 2025</a> by ASGI, EMERGENCY, Sea-Watch and Mem.Med about two migrants recovered in Libyan SAR waters, where they noted that immediate burial often prevents identification. Without these procedures, people disappear twice: first in the sea, and then again in the administrative silence that follows.</p>
     </div>
   </section>
 
@@ -796,18 +767,18 @@
         <p>This piece is built from five datasets: two meteorological / satellite raster products, two incident lists of recorded migrant deaths, and one set of administrative-zone polygons. Every dataset used in the article is listed below.</p>
         <ul>
           <li><strong>ERA5 hourly reanalysis</strong> — 10 m wind, mean sea-level pressure and significant wave height over the Mediterranean, 0.25° grid. Source: <a href="https://cds.climate.copernicus.eu/">Copernicus Climate Data Store</a>, retrieved through the <code>cdsapi</code> client (free CDS account required).</li>
-          <li><strong>Meteosat MSG SEVIRI IR_108</strong> — 10.8 µm cloud-top brightness temperature, cropped to the Mediterranean at 3-hourly cadence. Source: <a href="https://data.eumetsat.int/">EUMETSAT Data Store</a>, retrieved through the <code>eumdac</code> client (HRSEVIRI usage license required).</li>
+          <li><strong>Meteosat Second Generation (MSG) Spinning Enhanced Visible and InfraRed Imager (SEVIRI), channel IR_108</strong> — 10.8 µm cloud-top brightness temperature, cropped to the Mediterranean at 3-hourly cadence. Source: <a href="https://data.eumetsat.int/">European Organisation for the Exploitation of Meteorological Satellites (EUMETSAT) Data Store</a>, retrieved through the <code>eumdac</code> client (HRSEVIRI usage license required).</li>
           <li><strong>UNITED for Intercultural Action — <em>List of Refugee Deaths</em></strong> — Network-compiled list of refugee and migrant deaths at Europe's borders since 1993. Filtered to the 20 entries whose cause-of-death description explicitly names Cyclone Harry (1,109 deaths). The raw data is <strong>not redistributed</strong> in this repository; the filtered CSV is available on request. Source: <a href="https://unitedagainstrefugeedeaths.eu/">unitedagainstrefugeedeaths.eu</a>.</li>
           <li><strong>IOM Missing Migrants Project</strong> — Incident-level deaths and disappearances of migrants globally, May 2026 snapshot. Filtered to the Central Mediterranean route between 14 January and 17 February 2026 (25 events, 499 dead or missing). The raw data is <strong>not redistributed</strong> in this repository; the filtered CSV is available on request. Source: <a href="https://missingmigrants.iom.int/">missingmigrants.iom.int</a>.</li>
-          <li><strong>IMO Search-and-Rescue zone polygons</strong> — Boundary polygons for the Italian, Maltese, Tunisian and Libyan SAR zones, parsed from the official GML files at the <a href="https://gisis.imo.org/">IMO GISIS Global SAR Plan</a> portal (registration required).</li>
+          <li><strong>IMO Search-and-Rescue zone polygons</strong> — Boundary polygons for the Italian, Maltese, Tunisian and Libyan SAR zones, parsed from the official Geography Markup Language (GML) files at the <a href="https://gisis.imo.org/">IMO GISIS Global SAR Plan</a> portal (registration required).</li>
           <li><strong>CartoDB Voyager (no labels)</strong> — Basemap tiles. © OpenStreetMap contributors, used under ODbL.</li>
         </ul>
 
-        <h3>2. The meteorological animation</h3>
-        <p>The first animation shows how Cyclone Harry developed and moved across the Central Mediterranean between 12 January and 17 February 2026. The colour shading represents wind speed — from calm (white) through moderate (green/yellow) to intense (orange/red) — while the contour lines trace atmospheric pressure and their concentric pattern marks the cyclone's centre. Both variables come from ERA5, a global atmospheric reanalysis produced by the Copernicus Climate Change Service. ERA5 is not a satellite measurement: it is a computational reconstruction of the state of the atmosphere, combining observational data from many sources with a numerical weather model to produce a consistent gridded dataset going back to 1940. The animation samples one frame every three hours.</p>
+        <h3>2. The infrared satellite animation</h3>
+        <p>The first animation shows what the Meteosat satellite saw looking down at the storm. The data come from the MSG SEVIRI instrument on board Meteosat, operated by EUMETSAT, which measures the temperature of cloud tops in the infrared. Cold cloud tops (shown in white and magenta) indicate tall, active convection — the engine of the storm. Warm values (grey) indicate low cloud or the sea surface. This is a direct satellite observation, not a model output. The satellite takes a full-disk image of Earth every 15 minutes; the animation uses one frame every three hours.</p>
 
-        <h3>3. The infrared satellite animation</h3>
-        <p>The second animation shows the same period from a different angle: what the Meteosat satellite saw looking down at the storm. The data come from the MSG SEVIRI instrument on board Meteosat, operated by EUMETSAT, which measures the temperature of cloud tops in the infrared. Cold cloud tops (shown in white and magenta) indicate tall, active convection — the engine of the storm. Warm values (grey) indicate low cloud or the sea surface. Unlike ERA5, this is a direct satellite observation, not a model output. The satellite takes a full-disk image of Earth every 15 minutes; the animation uses one frame every three hours, matching the ERA5 cadence. Both animations zoom progressively into the coast of Calabria from 1 February onwards, where bodies washed ashore in the weeks following the storm.</p>
+        <h3>3. The wind &amp; pressure animation</h3>
+        <p>The second animation shows the same period from a different angle: how Cyclone Harry developed and moved across the Central Mediterranean between 12 January and 17 February 2026. The colour shading represents wind speed — from calm (white) through moderate (green/yellow) to intense (orange/red) — while the contour lines trace atmospheric pressure and their concentric pattern marks the cyclone's centre. Both variables come from ERA5, a global atmospheric reanalysis produced by the Copernicus Climate Change Service. ERA5 is not a satellite measurement: it is a computational reconstruction of the state of the atmosphere, combining observational data from many sources with a numerical weather model to produce a consistent gridded dataset going back to 1940. The animation samples one frame every three hours, matching the satellite cadence. Both animations zoom progressively into the coast of Calabria from 1 February onwards, where bodies washed ashore in the weeks following the storm.</p>
 
         <h3>4. The incident data: UNITED for Intercultural Action</h3>
         <p>UNITED for Intercultural Action has maintained its <em>List of Refugee Deaths</em> since 1993, documenting individual cases of people who have died at or because of the borders of Europe. The list is compiled from reports by a network of roughly 550 organisations across 48 countries, supplemented by journalists, researchers, and local experts. Each entry is individually verified and includes the date, location, number of deaths, and a brief description of the cause. For this article, the dataset was filtered to the 20 entries whose cause-of-death description explicitly names Cyclone Harry, yielding 1,109 recorded deaths. This filter is deliberate but limiting: it counts only events where the connection to the storm was explicitly documented at the time, and will miss cases where the link was never established or recorded.</p>
@@ -841,6 +812,7 @@
         <li>Refugees in Libya. (2026, January 30). <em>Over 1,000 People Missing in the Mediterranean Following Cyclone Harry? What We Know — and What Remains Unaccounted For.</em> <a href="https://www.refugeesinlibya.org/post/over-1-000-people-missing-in-the-mediterranean-following-cyclone-harry-what-we-know-and-what-rema">refugeesinlibya.org</a></li>
         <li>Rodríguez Sánchez, A., et al. (2023). <em>Search-and-rescue in the Central Mediterranean Route does not induce migration: Predictive modeling to answer causal queries in migration research.</em> Scientific Reports. <a href="https://www.nature.com/articles/s41598-023-38119-4">nature.com</a></li>
         <li>Scientific American. (2017, August 9). <em>Giving Dead Migrants a Name.</em> <a href="https://www.scientificamerican.com/article/giving-dead-migrants-a-name/">scientificamerican.com</a></li>
+        <li>TG2000. (2026, February 2). <em>Migranti, Mediterranea: "Mille morti in mare per ciclone Harry".</em> YouTube. <a href="https://www.youtube.com/watch?v=triom_MRq3A">youtube.com/watch?v=triom_MRq3A</a></li>
         <li>UNITED for Intercultural Action. <em>Fatal Policies of Fortress Europe — About the United List of Deaths.</em> <a href="https://unitedagainstrefugeedeaths.eu/about-the-campaign/about-the-united-list-of-deaths/">unitedagainstrefugeedeaths.eu</a></li>
       </ul>
     </div>
@@ -866,14 +838,38 @@
     var currentIdx = -1;
     var pauseAt    = null;
 
-    // Pause at the target time precisely.
-    video.addEventListener('timeupdate', function () {
-      if (pauseAt !== null && video.currentTime >= pauseAt) {
+    // Ease-out pause: as the video approaches pauseAt, ramp playbackRate
+    // down. We poll via requestAnimationFrame (~60 Hz) instead of the
+    // video element's "timeupdate" event (~4 Hz), so the rate updates
+    // smoothly and the pause lands within a single frame of the target.
+    var DECEL_WINDOW = 0.6;
+    var MIN_RATE     = 0.25;
+    var monitorOn    = false;
+
+    function monitor() {
+      if (pauseAt === null) { monitorOn = false; return; }
+      var remaining = pauseAt - video.currentTime;
+      if (remaining <= 0) {
         video.pause();
         video.currentTime = pauseAt;
+        video.playbackRate = 1;
         pauseAt = null;
+        monitorOn = false;
+        return;
       }
-    });
+      if (remaining < DECEL_WINDOW) {
+        var t = remaining / DECEL_WINDOW;
+        video.playbackRate = MIN_RATE + t * (1 - MIN_RATE);
+      } else if (video.playbackRate !== 1) {
+        video.playbackRate = 1;
+      }
+      requestAnimationFrame(monitor);
+    }
+    function startMonitor() {
+      if (monitorOn) return;
+      monitorOn = true;
+      requestAnimationFrame(monitor);
+    }
 
     function activeIdx() {
       var trigger = window.innerHeight * 0.5;
@@ -891,12 +887,15 @@
       target = Math.min(target, video.duration);
 
       if (video.currentTime < target - 0.05) {
-        // Forward — play through to target
+        // Forward — play through to target (decelerated via monitor loop)
         pauseAt = target;
+        video.playbackRate = 1;
         if (video.paused) video.play().catch(function () {});
+        startMonitor();
       } else {
         // We're at or past the target — snap back and pause there.
         pauseAt = null;
+        video.playbackRate = 1;
         video.pause();
         video.currentTime = target;
       }
@@ -926,8 +925,8 @@
     var captionSource = document.getElementById('caption-source');
     var sourceButtons = document.querySelectorAll('.source-btn');
     var CAPTION_TEXT  = {
-      ir:   "Meteosat SEVIRI 10.8 µm cloud-top brightness temperature. White/magenta = coldest tops, deepest convection; grey = low cloud or sea surface.",
-      wind: "Wind speed (colour, km/h) and sea-level pressure (contour lines, hPa) from ERA5 reanalysis, 3-hourly."
+      ir:   "Meteosat SEVIRI 10.8 µm cloud-top temperature — white/magenta = deepest convection, grey = low cloud or sea. Toggle for the wind & pressure view.",
+      wind: "ERA5 wind speed (colour, km/h) and sea-level pressure (contours, hPa), 3-hourly. Toggle for the satellite view."
     };
 
     sourceButtons.forEach(function (btn) {
