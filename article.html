@@ -241,9 +241,9 @@
     }
     .player video {
       display: block;
-      width: 102%;
+      width: 100%;
       height: auto;
-      margin-left: -1%;
+      margin-left: 0;
     }
     .video-toggle {
       display: flex;
@@ -785,7 +785,7 @@
        ════════════════════════════════════════════════════ -->
   <section class="text-section">
     <div class="prose">
-      <p>The figures differ because the organizations collect and classify deaths in different ways. The IOM’s Missing Migrants Project records each incident through a hierarchy of evidence: official and forensic records where available, then media reports, NGO sources, and survivor testimony. It publishes a documented minimum for events it can verify, often through more than one source. This makes the dataset conservative by design. UNITED for Intercultural Action follows a different approach. Since 1993, its List of Refugee Deaths has recorded deaths linked to European border policy, using a wider evidentiary base that includes member organizations, families, media reports, and civil-society networks. Its definition is also broader: it includes deaths at sea, at land borders, in detention, and after arrival.</p>
+      <p>The figures differ because the two organizations collect and classify deaths in different ways. IOM publishes a conservative, source-verified record of deaths and disappearances in a given migration corridor. UNITED draws on a wider network of civil-society sources and a broader definition of what counts — including deaths at sea, at land borders, in detention, and after arrival. The full breakdown is in the methodology section below.</p>
       <p>Between these two datasets are the organizations that witness events as they happen: rescue NGOs such as Mediterranea, SOS Méditerranée, and Sea-Watch; the Alarm Phone distress hotline; and activist networks such as Refugees in Libya. Their incident logs, distress calls, and survivor testimonies often feed into later counts. For events like the January 2026 crossings, where many boats left no survivors, these sources may be the only ones available. The underlying problem is what researchers call “invisible shipwrecks”: boats that leave shore, disappear without survivors, and leave no official trace. This is why all these figures should be read as minimum estimates. The actual number is likely higher.</p>
       
       <div class="section-label">How to identify the bodies, and why it is important</div>
@@ -946,7 +946,11 @@
       requestAnimationFrame(function () { rafPending = false; update(); });
     }, { passive: true });
     window.addEventListener('resize', update);
+    // Half-speed playback gives the reader more time per frame to absorb each
+    // step of the storm before scrolling to the next moment.
+    video.playbackRate = 0.5;
     video.addEventListener('loadedmetadata', function () {
+      video.playbackRate = 0.5;
       if (currentIdx >= 0) applyStep(currentIdx); else update();
     });
 
@@ -970,6 +974,7 @@
         video.load();
         video.addEventListener('loadedmetadata', function onLoaded() {
           video.removeEventListener('loadedmetadata', onLoaded);
+          video.playbackRate = 0.5;
           // Re-apply current step so the new video lands on the right frame.
           if (currentIdx >= 0) applyStep(currentIdx);
         });
