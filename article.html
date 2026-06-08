@@ -540,22 +540,43 @@
     /* ── RESPONSIVE ─────────────────────────────────────────────── */
     @media (max-width: 820px) {
       .scroll-scene { flex-direction: column; }
+      /* Phone: pin the video as a compact banner at the top of the screen so
+         it stays visible while the narrative steps scroll underneath it. */
       .sticky-panel {
-        position: relative;
+        position: sticky;
+        top: 0;
+        z-index: 5;
         height: auto;
         flex: none;
         width: 100%;
-        padding: 24px 20px;
-        top: auto;
+        padding: 12px 16px 10px;
+        background: var(--bg-dark);
+        border-bottom: 1px solid #2a2a2a;
+        align-items: center;
+        justify-content: flex-start;
       }
+      /* Cap the near-square video so the pinned banner stays under ~half the
+         screen, leaving room to read the steps below. */
+      .sticky-panel .player { width: auto; max-width: 100%; }
+      .sticky-panel .player video {
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        max-height: 44vh;
+        max-height: 44svh;
+        margin: 0 auto;
+      }
+      .video-toggle { flex-wrap: wrap; justify-content: center; }
+      .panel-caption { display: none; }   /* long colour legend hidden on phones */
       .steps-panel {
-        padding: 24px 24px 48px;
+        padding: 24px 20px 64px;
         background: var(--bg-step);
       }
       .step {
         min-height: auto;
         padding: 32px 0 32px 20px;
         opacity: 1;
+        scroll-snap-align: none;   /* free scroll keeps the pinned video steady */
       }
       .step.active { border-left-color: var(--accent-lt); }
     }
@@ -904,7 +925,11 @@
     }
 
     function activeIdx() {
-      var trigger = window.innerHeight * 0.5;
+      // Phones pin the video to the top ~half of the screen, so a step counts
+      // as active a little lower down (0.62) than on desktop (0.5, untouched).
+      var trigger = window.innerWidth <= 820
+        ? window.innerHeight * 0.62
+        : window.innerHeight * 0.5;
       var idx = 0;
       for (var i = 0; i < steps.length; i++) {
         if (steps[i].getBoundingClientRect().top <= trigger) idx = i;
