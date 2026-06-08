@@ -971,11 +971,11 @@
       requestAnimationFrame(function () { rafPending = false; update(); });
     }, { passive: true });
     window.addEventListener('resize', update);
-    // Half-speed playback gives the reader more time per frame to absorb each
+    // Slightly-slowed playback (0.65×) gives the reader time to absorb each
     // step of the storm before scrolling to the next moment.
-    video.playbackRate = 0.5;
+    video.playbackRate = 0.65;
     video.addEventListener('loadedmetadata', function () {
-      video.playbackRate = 0.5;
+      video.playbackRate = 0.65;
       if (currentIdx >= 0) applyStep(currentIdx); else update();
     });
 
@@ -999,7 +999,7 @@
         video.load();
         video.addEventListener('loadedmetadata', function onLoaded() {
           video.removeEventListener('loadedmetadata', onLoaded);
-          video.playbackRate = 0.5;
+          video.playbackRate = 0.65;
           // Re-apply current step so the new video lands on the right frame.
           if (currentIdx >= 0) applyStep(currentIdx);
         });
